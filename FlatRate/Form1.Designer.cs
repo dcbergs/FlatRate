@@ -33,6 +33,10 @@
             this.btnLoadCSV = new System.Windows.Forms.Button();
             this.btnAddPartToTask = new System.Windows.Forms.Button();
             this.jobEditBox = new System.Windows.Forms.GroupBox();
+            this.txtBoxSubcategory = new System.Windows.Forms.TextBox();
+            this.lblTaskSubcategory = new System.Windows.Forms.Label();
+            this.txtBoxTaskCategory = new System.Windows.Forms.TextBox();
+            this.lblTaskCategory = new System.Windows.Forms.Label();
             this.txtBoxTaskID = new System.Windows.Forms.TextBox();
             this.lblTaskID = new System.Windows.Forms.Label();
             this.lblPremiumDollars = new System.Windows.Forms.Label();
@@ -51,32 +55,24 @@
             this.lblTaskDescription = new System.Windows.Forms.Label();
             this.lblTaskTitle = new System.Windows.Forms.Label();
             this.taskPartsGridView = new System.Windows.Forms.DataGridView();
-            this.partsGroupBox = new System.Windows.Forms.GroupBox();
-            this.partsGridView = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.taskGroupBox = new System.Windows.Forms.GroupBox();
-            this.btnExportToPDF = new System.Windows.Forms.Button();
-            this.btnDeleteSelectedTask = new System.Windows.Forms.Button();
-            this.btnLoadTaskList = new System.Windows.Forms.Button();
-            this.btnSaveTaskList = new System.Windows.Forms.Button();
-            this.tasksGridView = new System.Windows.Forms.DataGridView();
-            this.saveTaskListDialog = new System.Windows.Forms.SaveFileDialog();
-            this.exportPDFDialog = new System.Windows.Forms.SaveFileDialog();
-            this.openTaskListDialog = new System.Windows.Forms.OpenFileDialog();
-            this.lblTaskCategory = new System.Windows.Forms.Label();
-            this.txtBoxTaskCategory = new System.Windows.Forms.TextBox();
-            this.lblTaskSubcategory = new System.Windows.Forms.Label();
-            this.txtBoxSubcategory = new System.Windows.Forms.TextBox();
-            this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.descriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.priceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.partNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.partDescriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.partUnitCostDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.partQuantityDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.partSubtotalDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.partsGroupBox = new System.Windows.Forms.GroupBox();
+            this.partsGridView = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.descriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.priceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.taskGroupBox = new System.Windows.Forms.GroupBox();
+            this.btnExportToPDF = new System.Windows.Forms.Button();
+            this.btnDeleteSelectedTask = new System.Windows.Forms.Button();
+            this.btnLoadTaskList = new System.Windows.Forms.Button();
+            this.btnSaveTaskList = new System.Windows.Forms.Button();
+            this.tasksGridView = new System.Windows.Forms.DataGridView();
             this.taskIDDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.titleDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.descriptionDataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -86,15 +82,19 @@
             this.partsCostDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.standardTotalDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.premiumTotalDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.saveTaskListDialog = new System.Windows.Forms.SaveFileDialog();
+            this.exportPDFDialog = new System.Windows.Forms.SaveFileDialog();
+            this.openTaskListDialog = new System.Windows.Forms.OpenFileDialog();
             this.jobEditBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskPartsGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).BeginInit();
             this.partsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.partsGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).BeginInit();
             this.taskGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tasksGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.taskBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // openPartsListDialog
@@ -152,6 +152,40 @@
             this.jobEditBox.TabIndex = 1;
             this.jobEditBox.TabStop = false;
             this.jobEditBox.Text = "Edit Task";
+            // 
+            // txtBoxSubcategory
+            // 
+            this.txtBoxSubcategory.Location = new System.Drawing.Point(251, 48);
+            this.txtBoxSubcategory.Name = "txtBoxSubcategory";
+            this.txtBoxSubcategory.Size = new System.Drawing.Size(100, 20);
+            this.txtBoxSubcategory.TabIndex = 20;
+            this.txtBoxSubcategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxSubcategory_Validating);
+            // 
+            // lblTaskSubcategory
+            // 
+            this.lblTaskSubcategory.AutoSize = true;
+            this.lblTaskSubcategory.Location = new System.Drawing.Point(177, 51);
+            this.lblTaskSubcategory.Name = "lblTaskSubcategory";
+            this.lblTaskSubcategory.Size = new System.Drawing.Size(67, 13);
+            this.lblTaskSubcategory.TabIndex = 19;
+            this.lblTaskSubcategory.Text = "Subcategory";
+            // 
+            // txtBoxTaskCategory
+            // 
+            this.txtBoxTaskCategory.Location = new System.Drawing.Point(251, 21);
+            this.txtBoxTaskCategory.Name = "txtBoxTaskCategory";
+            this.txtBoxTaskCategory.Size = new System.Drawing.Size(100, 20);
+            this.txtBoxTaskCategory.TabIndex = 18;
+            this.txtBoxTaskCategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxTaskCategory_Validating);
+            // 
+            // lblTaskCategory
+            // 
+            this.lblTaskCategory.AutoSize = true;
+            this.lblTaskCategory.Location = new System.Drawing.Point(177, 24);
+            this.lblTaskCategory.Name = "lblTaskCategory";
+            this.lblTaskCategory.Size = new System.Drawing.Size(49, 13);
+            this.lblTaskCategory.TabIndex = 17;
+            this.lblTaskCategory.Text = "Category";
             // 
             // txtBoxTaskID
             // 
@@ -329,6 +363,49 @@
             this.taskPartsGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.taskPartsGridView_CellFormatting);
             this.taskPartsGridView.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.taskPartsGridView_CellValidating);
             // 
+            // partNameDataGridViewTextBoxColumn
+            // 
+            this.partNameDataGridViewTextBoxColumn.DataPropertyName = "partName";
+            this.partNameDataGridViewTextBoxColumn.HeaderText = "name";
+            this.partNameDataGridViewTextBoxColumn.Name = "partNameDataGridViewTextBoxColumn";
+            this.partNameDataGridViewTextBoxColumn.ReadOnly = true;
+            this.partNameDataGridViewTextBoxColumn.Width = 58;
+            // 
+            // partDescriptionDataGridViewTextBoxColumn
+            // 
+            this.partDescriptionDataGridViewTextBoxColumn.DataPropertyName = "partDescription";
+            this.partDescriptionDataGridViewTextBoxColumn.HeaderText = "description";
+            this.partDescriptionDataGridViewTextBoxColumn.Name = "partDescriptionDataGridViewTextBoxColumn";
+            this.partDescriptionDataGridViewTextBoxColumn.ReadOnly = true;
+            this.partDescriptionDataGridViewTextBoxColumn.Width = 83;
+            // 
+            // partUnitCostDataGridViewTextBoxColumn
+            // 
+            this.partUnitCostDataGridViewTextBoxColumn.DataPropertyName = "partUnitCost";
+            this.partUnitCostDataGridViewTextBoxColumn.HeaderText = "unit cost";
+            this.partUnitCostDataGridViewTextBoxColumn.Name = "partUnitCostDataGridViewTextBoxColumn";
+            this.partUnitCostDataGridViewTextBoxColumn.ReadOnly = true;
+            this.partUnitCostDataGridViewTextBoxColumn.Width = 72;
+            // 
+            // partQuantityDataGridViewTextBoxColumn
+            // 
+            this.partQuantityDataGridViewTextBoxColumn.DataPropertyName = "partQuantity";
+            this.partQuantityDataGridViewTextBoxColumn.HeaderText = "quantity";
+            this.partQuantityDataGridViewTextBoxColumn.Name = "partQuantityDataGridViewTextBoxColumn";
+            this.partQuantityDataGridViewTextBoxColumn.Width = 69;
+            // 
+            // partSubtotalDataGridViewTextBoxColumn
+            // 
+            this.partSubtotalDataGridViewTextBoxColumn.DataPropertyName = "partSubtotal";
+            this.partSubtotalDataGridViewTextBoxColumn.HeaderText = "subtotal";
+            this.partSubtotalDataGridViewTextBoxColumn.Name = "partSubtotalDataGridViewTextBoxColumn";
+            this.partSubtotalDataGridViewTextBoxColumn.ReadOnly = true;
+            this.partSubtotalDataGridViewTextBoxColumn.Width = 69;
+            // 
+            // taskRowBindingSource
+            // 
+            this.taskRowBindingSource.DataSource = typeof(FlatRate.TaskRow);
+            // 
             // partsGroupBox
             // 
             this.partsGroupBox.Controls.Add(this.partsGridView);
@@ -367,6 +444,26 @@
             this.Column1.Name = "Column1";
             this.Column1.ReadOnly = true;
             this.Column1.Width = 58;
+            // 
+            // descriptionDataGridViewTextBoxColumn
+            // 
+            this.descriptionDataGridViewTextBoxColumn.DataPropertyName = "description";
+            this.descriptionDataGridViewTextBoxColumn.HeaderText = "description";
+            this.descriptionDataGridViewTextBoxColumn.Name = "descriptionDataGridViewTextBoxColumn";
+            this.descriptionDataGridViewTextBoxColumn.ReadOnly = true;
+            this.descriptionDataGridViewTextBoxColumn.Width = 83;
+            // 
+            // priceDataGridViewTextBoxColumn
+            // 
+            this.priceDataGridViewTextBoxColumn.DataPropertyName = "price";
+            this.priceDataGridViewTextBoxColumn.HeaderText = "price";
+            this.priceDataGridViewTextBoxColumn.Name = "priceDataGridViewTextBoxColumn";
+            this.priceDataGridViewTextBoxColumn.ReadOnly = true;
+            this.priceDataGridViewTextBoxColumn.Width = 55;
+            // 
+            // partBindingSource
+            // 
+            this.partBindingSource.DataSource = typeof(FlatRate.Part);
             // 
             // taskGroupBox
             // 
@@ -447,118 +544,6 @@
             this.tasksGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.tasksGridView_CellDoubleClick);
             this.tasksGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.tasksGridView_CellFormatting);
             // 
-            // saveTaskListDialog
-            // 
-            this.saveTaskListDialog.DefaultExt = "csv";
-            this.saveTaskListDialog.Filter = "Comma-Separated Values (*.csv) | *.csv";
-            this.saveTaskListDialog.Title = "Save Task List to CSV";
-            // 
-            // exportPDFDialog
-            // 
-            this.exportPDFDialog.DefaultExt = "pdf";
-            this.exportPDFDialog.Filter = "PDF (*.pdf) | *.pdf";
-            // 
-            // lblTaskCategory
-            // 
-            this.lblTaskCategory.AutoSize = true;
-            this.lblTaskCategory.Location = new System.Drawing.Point(177, 24);
-            this.lblTaskCategory.Name = "lblTaskCategory";
-            this.lblTaskCategory.Size = new System.Drawing.Size(49, 13);
-            this.lblTaskCategory.TabIndex = 17;
-            this.lblTaskCategory.Text = "Category";
-            // 
-            // txtBoxTaskCategory
-            // 
-            this.txtBoxTaskCategory.Location = new System.Drawing.Point(251, 21);
-            this.txtBoxTaskCategory.Name = "txtBoxTaskCategory";
-            this.txtBoxTaskCategory.Size = new System.Drawing.Size(100, 20);
-            this.txtBoxTaskCategory.TabIndex = 18;
-            this.txtBoxTaskCategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxTaskCategory_Validating);
-            // 
-            // lblTaskSubcategory
-            // 
-            this.lblTaskSubcategory.AutoSize = true;
-            this.lblTaskSubcategory.Location = new System.Drawing.Point(177, 51);
-            this.lblTaskSubcategory.Name = "lblTaskSubcategory";
-            this.lblTaskSubcategory.Size = new System.Drawing.Size(67, 13);
-            this.lblTaskSubcategory.TabIndex = 19;
-            this.lblTaskSubcategory.Text = "Subcategory";
-            // 
-            // txtBoxSubcategory
-            // 
-            this.txtBoxSubcategory.Location = new System.Drawing.Point(251, 48);
-            this.txtBoxSubcategory.Name = "txtBoxSubcategory";
-            this.txtBoxSubcategory.Size = new System.Drawing.Size(100, 20);
-            this.txtBoxSubcategory.TabIndex = 20;
-            this.txtBoxSubcategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxSubcategory_Validating);
-            // 
-            // taskBindingSource
-            // 
-            this.taskBindingSource.DataSource = typeof(FlatRate.Task);
-            // 
-            // descriptionDataGridViewTextBoxColumn
-            // 
-            this.descriptionDataGridViewTextBoxColumn.DataPropertyName = "description";
-            this.descriptionDataGridViewTextBoxColumn.HeaderText = "description";
-            this.descriptionDataGridViewTextBoxColumn.Name = "descriptionDataGridViewTextBoxColumn";
-            this.descriptionDataGridViewTextBoxColumn.ReadOnly = true;
-            this.descriptionDataGridViewTextBoxColumn.Width = 83;
-            // 
-            // priceDataGridViewTextBoxColumn
-            // 
-            this.priceDataGridViewTextBoxColumn.DataPropertyName = "price";
-            this.priceDataGridViewTextBoxColumn.HeaderText = "price";
-            this.priceDataGridViewTextBoxColumn.Name = "priceDataGridViewTextBoxColumn";
-            this.priceDataGridViewTextBoxColumn.ReadOnly = true;
-            this.priceDataGridViewTextBoxColumn.Width = 55;
-            // 
-            // partBindingSource
-            // 
-            this.partBindingSource.DataSource = typeof(FlatRate.Part);
-            // 
-            // partNameDataGridViewTextBoxColumn
-            // 
-            this.partNameDataGridViewTextBoxColumn.DataPropertyName = "partName";
-            this.partNameDataGridViewTextBoxColumn.HeaderText = "name";
-            this.partNameDataGridViewTextBoxColumn.Name = "partNameDataGridViewTextBoxColumn";
-            this.partNameDataGridViewTextBoxColumn.ReadOnly = true;
-            this.partNameDataGridViewTextBoxColumn.Width = 58;
-            // 
-            // partDescriptionDataGridViewTextBoxColumn
-            // 
-            this.partDescriptionDataGridViewTextBoxColumn.DataPropertyName = "partDescription";
-            this.partDescriptionDataGridViewTextBoxColumn.HeaderText = "description";
-            this.partDescriptionDataGridViewTextBoxColumn.Name = "partDescriptionDataGridViewTextBoxColumn";
-            this.partDescriptionDataGridViewTextBoxColumn.ReadOnly = true;
-            this.partDescriptionDataGridViewTextBoxColumn.Width = 83;
-            // 
-            // partUnitCostDataGridViewTextBoxColumn
-            // 
-            this.partUnitCostDataGridViewTextBoxColumn.DataPropertyName = "partUnitCost";
-            this.partUnitCostDataGridViewTextBoxColumn.HeaderText = "unit cost";
-            this.partUnitCostDataGridViewTextBoxColumn.Name = "partUnitCostDataGridViewTextBoxColumn";
-            this.partUnitCostDataGridViewTextBoxColumn.ReadOnly = true;
-            this.partUnitCostDataGridViewTextBoxColumn.Width = 72;
-            // 
-            // partQuantityDataGridViewTextBoxColumn
-            // 
-            this.partQuantityDataGridViewTextBoxColumn.DataPropertyName = "partQuantity";
-            this.partQuantityDataGridViewTextBoxColumn.HeaderText = "quantity";
-            this.partQuantityDataGridViewTextBoxColumn.Name = "partQuantityDataGridViewTextBoxColumn";
-            this.partQuantityDataGridViewTextBoxColumn.Width = 69;
-            // 
-            // partSubtotalDataGridViewTextBoxColumn
-            // 
-            this.partSubtotalDataGridViewTextBoxColumn.DataPropertyName = "partSubtotal";
-            this.partSubtotalDataGridViewTextBoxColumn.HeaderText = "subtotal";
-            this.partSubtotalDataGridViewTextBoxColumn.Name = "partSubtotalDataGridViewTextBoxColumn";
-            this.partSubtotalDataGridViewTextBoxColumn.ReadOnly = true;
-            this.partSubtotalDataGridViewTextBoxColumn.Width = 69;
-            // 
-            // taskRowBindingSource
-            // 
-            this.taskRowBindingSource.DataSource = typeof(FlatRate.TaskRow);
-            // 
             // taskIDDataGridViewTextBoxColumn
             // 
             this.taskIDDataGridViewTextBoxColumn.DataPropertyName = "taskID";
@@ -622,6 +607,21 @@
             this.premiumTotalDataGridViewTextBoxColumn.Name = "premiumTotalDataGridViewTextBoxColumn";
             this.premiumTotalDataGridViewTextBoxColumn.ReadOnly = true;
             // 
+            // taskBindingSource
+            // 
+            this.taskBindingSource.DataSource = typeof(FlatRate.Task);
+            // 
+            // saveTaskListDialog
+            // 
+            this.saveTaskListDialog.DefaultExt = "csv";
+            this.saveTaskListDialog.Filter = "Comma-Separated Values (*.csv) | *.csv";
+            this.saveTaskListDialog.Title = "Save Task List to CSV";
+            // 
+            // exportPDFDialog
+            // 
+            this.exportPDFDialog.DefaultExt = "pdf";
+            this.exportPDFDialog.Filter = "PDF (*.pdf) | *.pdf";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -631,17 +631,17 @@
             this.Controls.Add(this.partsGroupBox);
             this.Controls.Add(this.jobEditBox);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "FlatRate w datasets";
             this.jobEditBox.ResumeLayout(false);
             this.jobEditBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskPartsGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).EndInit();
             this.partsGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.partsGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).EndInit();
             this.taskGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.tasksGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.taskBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }
