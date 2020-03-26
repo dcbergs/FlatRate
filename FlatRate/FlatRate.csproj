@@ -62,14 +62,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Category.cs" />
+    <Compile Include="CategoriesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CategoriesForm.Designer.cs">
+      <DependentUpon>CategoriesForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="OutputBook.cs" />
-    <Compile Include="OutputTasks.cs" />
-    <Compile Include="Subcategory.cs" />
-    <Compile Include="Task.cs" />
+    <Compile Include="RatesForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RatesForm.Designer.cs">
+      <DependentUpon>RatesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Schema.cs" />
     <Compile Include="TaskRow.cs" />
-    <Compile Include="Part.cs" />
-    <Compile Include="PartList.cs" />
     <Compile Include="readInput.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -79,6 +86,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CategoriesForm.resx">
+      <DependentUpon>CategoriesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -91,7 +101,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RatesForm.resx">
+      <DependentUpon>RatesForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
+    <None Include="Properties\DataSources\Form1.datasource" />
     <None Include="Properties\DataSources\JobRow.datasource" />
     <None Include="Properties\DataSources\Part.datasource" />
     <None Include="Properties\DataSources\PartList.datasource" />
@@ -111,6 +125,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="images\logo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

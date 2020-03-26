@@ -5,6 +5,7 @@ using MigraDoc.Rendering;
 using PdfSharp.Pdf;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,10 +17,12 @@ namespace FlatRate
     class OutputBook
     {
         private string filename;
+        private DataSet data;
 
-        public OutputBook(string filename)
+        public OutputBook(string filename, DataSet data)
         {
             this.filename = filename;
+            this.data = data;
         }
 
         //helper function for loading resource images rather than from file path
@@ -44,7 +47,7 @@ namespace FlatRate
             }
         }
 
-        public void writeBook(Dictionary<string, Category> categories, List<Task> taskList)
+        public void writeBook()
         {
             //create document
             Document doc = new Document();
@@ -58,11 +61,9 @@ namespace FlatRate
             //define contents
             defineCover(doc);
 
-            defineTableOfContents(doc, categories);
+            defineTableOfContents(doc);
 
-            defineContent(doc, categories, taskList);
-
-
+            defineContent(doc);
 
             //render document
             PdfDocumentRenderer pdfRenderer = new PdfDocumentRenderer(false);
@@ -70,8 +71,8 @@ namespace FlatRate
 
             pdfRenderer.RenderDocument();
 
-            //save document
             pdfRenderer.PdfDocument.Save(filename);
+
         }
 
         //set styles for headings, maybe text boxes and cells?
@@ -99,7 +100,21 @@ namespace FlatRate
             style.Font.Color = Colors.White;
             style.ParagraphFormat.Borders.Width = 2;
             style.ParagraphFormat.Shading.Color = Colors.Black;
-            
+            style.ParagraphFormat.LeftIndent = 0;
+
+            //subcategory heading style
+            style = doc.Styles.AddStyle("Subcategory", "Normal");
+            style.Font.Size = 16;
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+            style.ParagraphFormat.Borders.Bottom.Width = 2;
+
+            //id style
+            style = doc.Styles.AddStyle("id", "Normal");
+            style.Font.Size = 8;
+
+            //desc style
+            style = doc.Styles.AddStyle("desc", "Normal");
+            style.Font.Size = 8;
 
             //footer style for page numbers
             style = doc.Styles[StyleNames.Footer];
@@ -125,7 +140,7 @@ namespace FlatRate
 
         }
 
-        public void defineTableOfContents(Document doc, Dictionary<string, Category> categories)
+        public void defineTableOfContents(Document doc)
         {
             Section tableOfContentsSection = doc.AddSection();
 
@@ -134,68 +149,115 @@ namespace FlatRate
             title.Format.Font.Bold = true;
             title.Format.SpaceAfter = 24;
 
-            foreach(KeyValuePair<string, Category> kvp in categories)
+            foreach(DataRow category in data.Tables["Categories"].AsEnumerable())
             {
                 Paragraph paragraph = tableOfContentsSection.AddParagraph();
                 paragraph.Style = "TOC";
                 //hyperlink takes a string which finds the matching Bookmark
-                Hyperlink link = paragraph.AddHyperlink(kvp.Key);
-                link.AddText(kvp.Key);
+                //use ID ToString since ID is the PK
+                Hyperlink link = paragraph.AddHyperlink(category.Field<Int32>("ID").ToString());
+                link.AddText(category.Field<String>("Title"));
                 link.AddTab();
-                link.AddPageRefField(kvp.Key);
+                link.AddPageRefField(category.Field<Int32>("ID").ToString());
                 
             }
-
-
         }
 
-        public void defineContent(Document doc, Dictionary<string, Category> categories, List<Task> taskList)
+        public void defineContent(Document doc)
         {
-            foreach (KeyValuePair<string, Category> kvp in categories)
+            //organized by category
+            foreach(DataRow category in data.Tables["Categories"].AsEnumerable())
             {
                 Section section = doc.AddSection();
 
-                //page number footers
+                section.PageSetup = doc.DefaultPageSetup.Clone();
+
+                Unit sectionWidth = section.PageSetup.PageWidth - section.PageSetup.LeftMargin - section.PageSetup.RightMargin;
+
+                //page number footers --done here because it must be added to a section
                 Paragraph footerP = new Paragraph();
                 footerP.AddTab();
                 footerP.AddPageField();
                 section.Footers.Primary.Add(footerP);
 
                 //category displayed
-                Paragraph categoryParagraph = section.AddParagraph(kvp.Key);
+                Paragraph categoryParagraph = section.AddParagraph(category.Field<String>("Title"));
                 categoryParagraph.Style = "Category";
 
                 //let table of contents link to category
-                categoryParagraph.AddBookmark(kvp.Key);
+                categoryParagraph.AddBookmark(category.Field<Int32>("ID").ToString());
 
-                //now create a table for the actual info
-                Table table = new Table();
-                //define columns
-                Column idColumn = table.AddColumn();
-                Column nameDescColumn = table.AddColumn();
-                Column standRateColumn = table.AddColumn();
-                Column premRateColumn = table.AddColumn();
+                //also organized by subcategory
+                EnumerableRowCollection<DataRow> subcategoryQuery =
+                    from subcats in data.Tables["Subcategories"].AsEnumerable()
+                    where subcats.Field<Int32>("CategoryID") == category.Field<Int32>("ID")
+                    select subcats;
 
-                //first row is table header
-                Row tableHeader = table.AddRow();
-                tableHeader.Cells[0].AddParagraph("Task");
-                tableHeader.Cells[0].MergeRight = 1;
-                tableHeader.Cells[2].AddParagraph("Standard Rate");
-                tableHeader.Cells[3].AddParagraph("Premium Rate");
-
-                foreach(Task task in taskList)
+                foreach(DataRow subcategory in subcategoryQuery)
                 {
-                    if(task.category.categoryName == kvp.Key)
+                    Paragraph subcategoryParagraph = section.AddParagraph(subcategory.Field<String>("Title"));
+                    subcategoryParagraph.Style = "Subcategory";
+
+                    //now create a table for the actual info
+                    //also border/etc styling-- it appears that cannot be handled by named styles
+                    Table table = new Table();
+                    table.Borders.Width = 0.75;
+                    table.Rows.LeftIndent = 0;
+
+                    //define columns
+                    Column idColumn = table.AddColumn(sectionWidth * 0.15);
+                    Column nameDescColumn = table.AddColumn(sectionWidth * 0.55);
+                    Column standRateColumn = table.AddColumn(sectionWidth * 0.15);
+                    standRateColumn.Format.Alignment = ParagraphAlignment.Center;
+                    Column premRateColumn = table.AddColumn(sectionWidth * 0.15);
+                    premRateColumn.Format.Alignment = ParagraphAlignment.Center;
+
+                    //first row is table header
+                    Row tableHeader = table.AddRow();
+                    tableHeader.Cells[0].AddParagraph("Task");
+                    tableHeader.Cells[0].MergeRight = 1;
+                    tableHeader.Cells[2].AddParagraph("Standard");
+                    tableHeader.Cells[3].AddParagraph("Premium");
+
+                    //add data for each task in this subcategory
+                    var taskrows =
+                        (from task in data.Tables["Tasks"].AsEnumerable()
+                        join taskpart in data.Tables["Tasks_Parts"].AsEnumerable()
+                        on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
+                        where task.Field<Int32>("SubcategoryID") == subcategory.Field<Int32>("ID")
+                         select new
+                         {
+                             id = task.Field<String>("ID"),
+                             title = task.Field<String>("Title"),
+                             desc = task.Field<String>("Description"),
+                             cat = task.GetParentRow("taskCategories").Field<String>("Title"),
+                             subcat = task.GetParentRow("taskSubcategories").Field<String>("Title"),
+                             hrs = task.Field<float>("Hours"),
+                             stdtotal = tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + task.Field<float>("Hours") * Program.STANDARD_RATE,
+                             premtotal = tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + task.Field<float>("Hours") * Program.PREMIUM_RATE
+                         }).ToList();
+
+                    foreach (var task in taskrows)
                     {
                         Row row = table.AddRow();
-                        row.Cells[0].AddParagraph(task.taskID);
-                        row.Cells[1].AddParagraph(task.title + "\n" + task.description);
-                        row.Cells[2].AddParagraph(task.standardTotal.ToString());
-                        row.Cells[3].AddParagraph(task.premiumTotal.ToString());
-                    }
-                }
+                        Paragraph idparagraph = row.Cells[0].AddParagraph(task.id);
+                        idparagraph.Style = "id";
+                        idparagraph.Format.Alignment = ParagraphAlignment.Center;
+                        row.Cells[0].VerticalAlignment = VerticalAlignment.Center;
 
-                section.Add(table);
+                        Paragraph titleParagraph = row.Cells[1].AddParagraph(task.title);
+                        
+                        Paragraph descParagraph = row.Cells[1].AddParagraph(task.desc);
+                        descParagraph.Style = "desc";
+                        row.Cells[2].AddParagraph(task.stdtotal.ToString("F"));
+                        row.Cells[2].VerticalAlignment = VerticalAlignment.Center;
+
+                        row.Cells[3].AddParagraph(task.premtotal.ToString("F"));
+                        row.Cells[3].VerticalAlignment = VerticalAlignment.Center;
+
+                    }
+                    section.Add(table);
+                }
             }
         }
     }
