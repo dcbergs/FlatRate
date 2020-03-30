@@ -233,8 +233,8 @@ namespace FlatRate
                              cat = task.GetParentRow("taskCategories").Field<String>("Title"),
                              subcat = task.GetParentRow("taskSubcategories").Field<String>("Title"),
                              hrs = task.Field<float>("Hours"),
-                             stdtotal = tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + task.Field<float>("Hours") * Program.STANDARD_RATE,
-                             premtotal = tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + task.Field<float>("Hours") * Program.PREMIUM_RATE
+                             stdtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
+                             premtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
                          }).ToList();
 
                     foreach (var task in taskrows)

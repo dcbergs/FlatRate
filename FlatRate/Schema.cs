@@ -27,6 +27,8 @@ namespace FlatRate
             tasks.Columns.Add("CategoryID", typeof(Int32));
             tasks.Columns.Add("SubcategoryID", typeof(Int32));
             tasks.Columns.Add("Hours", typeof(float));
+            tasks.Columns.Add("StdAddOn", typeof(float));
+            tasks.Columns.Add("PremAddOn", typeof(float));
             tasks.PrimaryKey = new DataColumn[] { pkTaskID };
 
             //define parts table

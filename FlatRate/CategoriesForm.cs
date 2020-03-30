@@ -169,8 +169,7 @@ namespace FlatRate
             //need to make sure a category is selected first
             if(categoryGridView.SelectedRows.Count == 0)
             {
-                e.Cancel = true;
-                errorProvider1.SetError(txtSubcategory, "Please select a category first");
+                MessageBox.Show("Please create and select a category first", "No category selected", MessageBoxButtons.OK);
             }
             else
             {
@@ -203,7 +202,7 @@ namespace FlatRate
                 //need to make sure a category is selected first
                 if (categoryGridView.SelectedRows.Count == 0)
                 {
-                    errorProvider1.SetError(txtSubcategory, "Please select a category first");
+                    MessageBox.Show("Please create and select a category first", "No category selected", MessageBoxButtons.OK);
                 }
                 else
                 {
@@ -240,6 +239,8 @@ namespace FlatRate
                         //use this query result as a view and sent to subcat datagridview
                         DataView view = query.AsDataView();
                         subcategoriesBindingSource.DataSource = view;
+                        subcategoryGridView.Columns[0].Visible = false;
+                        subcategoryGridView.Columns[2].Visible = false;
                     }
                 }
                 

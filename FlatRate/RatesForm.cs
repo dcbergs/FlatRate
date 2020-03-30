@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,15 @@ namespace FlatRate
             //save changes into STANDARD_RATE and PREMIUM_RATE
             Program.STANDARD_RATE = tryStandard;
             Program.PREMIUM_RATE = tryPremium;
+
+            //save changes to app data folder
+            var appDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FlatRate");
+
+            Directory.CreateDirectory(appDataDirectory);
+
+            SaveLoadSettings settingSaver = new SaveLoadSettings();
+            settingSaver.saveRates();
+
             //close form
             this.Close();
         }
