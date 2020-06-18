@@ -1,10 +1,14 @@
 # FlatRate
 
+![FlatRate UI](screen3.png)
+
 Favinger Plumbing operates on a "flat rate" system, where each task the plumber completes is assigned a flat price. While this price is based on assumed labor and parts, the labor and parts for a particular instance of a task may vary somewhat. This pricing system saves a great deal of time (no need to count every small part of every task completed each time) and allows up-front pricing (the price doesn't change just because the job took slightly longer or shorter). The system does not lose substantial flexibility, since auxiliary tasks can be used to account for special circumstances and other unforseen complications. 
 
 A key tool for this system is a flat rate book, containing an organized list of tasks and their prices at different rates. With our old book going out of date and no good tools to create a new one, a complicated system of spreadsheets and mail-merging was proposed. I suggested and created the FlatRate program as a simpler and more effective system to allow the creation of tasks from our established parts list (spreadsheet) and the exporting of those tasks to a printable book.
 
 Favinger FlatRate is written in C# using the .NET framework. The core of the program uses DataSet and related classes in the ADO.NET architecture to keep track of application data in a relational database structure. A variety of types of relationship are captured in the schema including a many-to-many table representing parts and quantities in each task, and various primary/foreign key interactions. As expected in such a data structure, deleting a category also removes associated 'subcategories,' 'tasks,' and 'tasks_parts' rows. Calculated values such as total costs are not stored in the data tables to better normalize the data, and are instead calculated as needed in the application logic.
+
+![FlatRateUI](screen2.png)
 
 FlatRate makes extensive use of the DataGridView class and data binding to represent the application data to the user. The user can simultaneously view part and task lists while editing a task. FlatRate provides CRUD functionality for tasks and categories, but parts are only uploaded and referenced. This was an intentional design decision, since the program was intended to simplify record-keeping of parts in relation to a flat rate book. Our part information is stored in a spreadsheet in a particular structure to interface with our inventory software. This spreadsheet acts as the central source of, and authority on, part information, so FlatRate was written to work in that system.
 
