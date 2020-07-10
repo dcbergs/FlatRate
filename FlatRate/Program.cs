@@ -20,7 +20,7 @@ namespace FlatRate
             Application.SetCompatibleTextRenderingDefault(false);
             STANDARD_RATE = 160.0f;
             PREMIUM_RATE = 180.0f;
-            Application.Run(new Form1());
+            Application.Run(new PrimaryForm());
         }
     }
 }

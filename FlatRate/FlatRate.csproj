@@ -92,36 +92,42 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoriesForm.cs">
+    <Compile Include="Forms\CategoriesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CategoriesForm.Designer.cs">
+    <Compile Include="Forms\CategoriesForm.Designer.cs">
       <DependentUpon>CategoriesForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OutputBook.cs" />
-    <Compile Include="RatesForm.cs">
+    <Compile Include="IO\OutputBook.cs" />
+    <Compile Include="Forms\RatesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RatesForm.Designer.cs">
+    <Compile Include="Forms\RatesForm.Designer.cs">
       <DependentUpon>RatesForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SaveLoadSettings.cs" />
-    <Compile Include="Schema.cs" />
-    <Compile Include="TaskRow.cs" />
-    <Compile Include="readInput.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="IO\SaveLoadSettings.cs" />
+    <Compile Include="Forms\SavePdfForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Forms\SavePdfForm.Designer.cs">
+      <DependentUpon>SavePdfForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Schema.cs" />
+    <Compile Include="Model\TaskRow.cs" />
+    <Compile Include="IO\readInput.cs" />
+    <Compile Include="Forms\PrimaryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PrimaryForm.Designer.cs">
+      <DependentUpon>PrimaryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CategoriesForm.resx">
+    <EmbeddedResource Include="Forms\CategoriesForm.resx">
       <DependentUpon>CategoriesForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\PrimaryForm.resx">
+      <DependentUpon>PrimaryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -131,9 +137,13 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="RatesForm.resx">
+    <EmbeddedResource Include="Forms\RatesForm.resx">
       <DependentUpon>RatesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SavePdfForm.resx">
+      <DependentUpon>SavePdfForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="FlatRate_TemporaryKey.pfx" />
     <None Include="packages.config" />

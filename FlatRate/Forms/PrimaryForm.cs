@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace FlatRate
 {
-    public partial class Form1 : Form
+    public partial class PrimaryForm : Form
     {
         private DataSet flatRateData = new DataSet("FlatRateData");
 
@@ -25,7 +21,7 @@ namespace FlatRate
         private ErrorProvider errorProvider1 = new ErrorProvider();
         private SaveLoadSettings saveLoader = new SaveLoadSettings();
 
-        public Form1()
+        public PrimaryForm()
         {
             InitializeComponent();
 
@@ -814,6 +810,8 @@ namespace FlatRate
         //----------------------------------------------------------------------EXPORT TO PDF---------------------------------------------
         private void btnExportToPDF_Click(object sender, EventArgs e)
         {
+
+            //first a form to get info on title, author, also dialog prompt for image source (optional?)
             if (exportPDFDialog.ShowDialog() == DialogResult.OK && exportPDFDialog.FileName != "")
             {
                 try

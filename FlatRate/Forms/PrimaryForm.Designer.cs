@@ -1,6 +1,6 @@
 ﻿namespace FlatRate
 {
-    partial class Form1
+    partial class PrimaryForm
     {
         /// <summary>
         /// Required designer variable.
