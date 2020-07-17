@@ -34,11 +34,13 @@
             this.authorText = new System.Windows.Forms.TextBox();
             this.radioButtonDefault = new System.Windows.Forms.RadioButton();
             this.coverImageGroupBox = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.radioButtonSelect = new System.Windows.Forms.RadioButton();
-            this.imagePathText = new System.Windows.Forms.TextBox();
             this.selectImageButton = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.imagePathText = new System.Windows.Forms.TextBox();
+            this.radioButtonSelect = new System.Windows.Forms.RadioButton();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.generatePdfButton = new System.Windows.Forms.Button();
+            this.exportPDFDialog = new System.Windows.Forms.SaveFileDialog();
+            this.imageOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.coverImageGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -59,6 +61,7 @@
             this.pdfTitleText.Size = new System.Drawing.Size(187, 20);
             this.pdfTitleText.TabIndex = 1;
             this.pdfTitleText.Text = "Favinger Plumbing Flat Rate Book";
+            this.pdfTitleText.Validating += new System.ComponentModel.CancelEventHandler(this.TextBox_Validating);
             // 
             // authorLabel
             // 
@@ -87,6 +90,7 @@
             this.radioButtonDefault.TabStop = true;
             this.radioButtonDefault.Text = "Default";
             this.radioButtonDefault.UseVisualStyleBackColor = true;
+            this.radioButtonDefault.CheckedChanged += new System.EventHandler(this.RadioCheckedChanged);
             // 
             // coverImageGroupBox
             // 
@@ -102,15 +106,22 @@
             this.coverImageGroupBox.TabStop = false;
             this.coverImageGroupBox.Text = "Cover Image";
             // 
-            // pictureBox1
+            // selectImageButton
             // 
-            this.pictureBox1.Image = global::FlatRate.Properties.Resources.logo;
-            this.pictureBox1.Location = new System.Drawing.Point(9, 42);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(144, 65);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 6;
-            this.pictureBox1.TabStop = false;
+            this.selectImageButton.Location = new System.Drawing.Point(206, 157);
+            this.selectImageButton.Name = "selectImageButton";
+            this.selectImageButton.Size = new System.Drawing.Size(28, 23);
+            this.selectImageButton.TabIndex = 9;
+            this.selectImageButton.Text = "...";
+            this.selectImageButton.UseVisualStyleBackColor = true;
+            this.selectImageButton.Click += new System.EventHandler(this.selectImageButton_Click);
+            // 
+            // imagePathText
+            // 
+            this.imagePathText.Location = new System.Drawing.Point(9, 160);
+            this.imagePathText.Name = "imagePathText";
+            this.imagePathText.Size = new System.Drawing.Size(191, 20);
+            this.imagePathText.TabIndex = 8;
             // 
             // radioButtonSelect
             // 
@@ -123,37 +134,41 @@
             this.radioButtonSelect.Text = "Select from File";
             this.radioButtonSelect.UseVisualStyleBackColor = true;
             // 
-            // imagePathText
+            // pictureBox1
             // 
-            this.imagePathText.Location = new System.Drawing.Point(9, 160);
-            this.imagePathText.Name = "imagePathText";
-            this.imagePathText.Size = new System.Drawing.Size(191, 20);
-            this.imagePathText.TabIndex = 8;
+            this.pictureBox1.Image = global::FlatRate.Properties.Resources.logo;
+            this.pictureBox1.Location = new System.Drawing.Point(9, 42);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(144, 65);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 6;
+            this.pictureBox1.TabStop = false;
             // 
-            // selectImageButton
+            // generatePdfButton
             // 
-            this.selectImageButton.Location = new System.Drawing.Point(206, 157);
-            this.selectImageButton.Name = "selectImageButton";
-            this.selectImageButton.Size = new System.Drawing.Size(28, 23);
-            this.selectImageButton.TabIndex = 9;
-            this.selectImageButton.Text = "...";
-            this.selectImageButton.UseVisualStyleBackColor = true;
+            this.generatePdfButton.Location = new System.Drawing.Point(85, 284);
+            this.generatePdfButton.Name = "generatePdfButton";
+            this.generatePdfButton.Size = new System.Drawing.Size(99, 23);
+            this.generatePdfButton.TabIndex = 7;
+            this.generatePdfButton.Text = "Generate PDF";
+            this.generatePdfButton.UseVisualStyleBackColor = true;
+            this.generatePdfButton.Click += new System.EventHandler(this.generatePdfButton_Click);
             // 
-            // button1
+            // exportPDFDialog
             // 
-            this.button1.Location = new System.Drawing.Point(85, 284);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(99, 23);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Generate PDF";
-            this.button1.UseVisualStyleBackColor = true;
+            this.exportPDFDialog.DefaultExt = "pdf";
+            this.exportPDFDialog.Filter = "PDF (*.pdf) | *.pdf";
+            // 
+            // imageOpenFileDialog
+            // 
+            this.imageOpenFileDialog.Filter = "Image Files (*.PNG; *.JPG) | *.png; *.jpg";
             // 
             // SavePdfForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(273, 319);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.generatePdfButton);
             this.Controls.Add(this.coverImageGroupBox);
             this.Controls.Add(this.authorText);
             this.Controls.Add(this.authorLabel);
@@ -181,6 +196,8 @@
         private System.Windows.Forms.TextBox imagePathText;
         private System.Windows.Forms.RadioButton radioButtonSelect;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button generatePdfButton;
+        private System.Windows.Forms.SaveFileDialog exportPDFDialog;
+        private System.Windows.Forms.OpenFileDialog imageOpenFileDialog;
     }
 }

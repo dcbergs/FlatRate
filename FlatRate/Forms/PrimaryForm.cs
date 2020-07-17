@@ -810,25 +810,10 @@ namespace FlatRate
         //----------------------------------------------------------------------EXPORT TO PDF---------------------------------------------
         private void btnExportToPDF_Click(object sender, EventArgs e)
         {
+            //first a form to get info on title, author, also dialog prompt for image source
+            SavePdfForm savePdfForm = new SavePdfForm(flatRateData);
+            savePdfForm.ShowDialog();
 
-            //first a form to get info on title, author, also dialog prompt for image source (optional?)
-            if (exportPDFDialog.ShowDialog() == DialogResult.OK && exportPDFDialog.FileName != "")
-            {
-                try
-                {
-                    OutputBook outputBook = new OutputBook(exportPDFDialog.FileName, flatRateData);
-                    outputBook.writeBook();
-                }
-                catch (IOException)
-                {
-                    MessageBox.Show("This file is already open. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
-                }
-                
-            }
-            else
-            {
-                //error with file name/dialog box?
-            }
         }
 
     }

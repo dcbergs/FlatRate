@@ -1,4 +1,6 @@
-﻿using MigraDoc.DocumentObjectModel;
+﻿using FlatRate.Model;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.DocumentObjectModel.Internals;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -14,11 +16,13 @@ namespace FlatRate
     {
         private string filename;
         private DataSet data;
+        private PdfAuthorInfo MetaInfo;
 
-        public OutputBook(string filename, DataSet data)
+        public OutputBook(string filename, DataSet data, PdfAuthorInfo info)
         {
             this.filename = filename;
             this.data = data;
+            this.MetaInfo = info;
         }
 
         //helper function for loading resource images rather than from file path
@@ -47,9 +51,9 @@ namespace FlatRate
         {
             //create document
             Document doc = new Document();
-            doc.Info.Title = "Favinger Plumbing Price Guide";
+            doc.Info.Title = MetaInfo.Title;
             doc.Info.Subject = "Flat rate pricing for plumbing jobs.";
-            doc.Info.Author = "CAZ Electric, LLC";
+            doc.Info.Author = MetaInfo.Author;
 
             //define styles
             setStyle(doc);
@@ -85,6 +89,12 @@ namespace FlatRate
             style.Font.Size = 24;
             style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
             style.ParagraphFormat.SpaceBefore = 16;
+
+            //subtitle style
+            style = doc.Styles.AddStyle("Subtitle", "Normal");
+            style.Font.Size = 20;
+            style.ParagraphFormat.Alignment = ParagraphAlignment.Center;
+            style.ParagraphFormat.SpaceBefore = 24;
 
             //table of contents style
             style = doc.Styles.AddStyle("TOC", "Normal");
@@ -123,16 +133,28 @@ namespace FlatRate
 
             Section coverSection = doc.AddSection();
 
-            byte[] logo = LoadImage("FlatRate.images.logo.jpg");
+            String logoFilename;
 
-            string logoFilename = MigraDocFilenameFromByteArray(logo);
+            if(MetaInfo.ImageFilePath == "")
+            {
+                byte[] logo = LoadImage("FlatRate.images.logo.jpg");
+
+                logoFilename = MigraDocFilenameFromByteArray(logo);
+            }
+            else
+            {
+                logoFilename = MetaInfo.ImageFilePath;
+            }
 
             Image logoImage = coverSection.AddImage(logoFilename);
             logoImage.Width = "15cm";
             logoImage.Left = ShapePosition.Center;
 
-            Paragraph titleP = coverSection.AddParagraph("Favinger Plumbing \nFlat Rate Pricing");
+            Paragraph titleP = coverSection.AddParagraph(MetaInfo.Title);
             titleP.Style = "Title";
+
+            Paragraph authorP = coverSection.AddParagraph(MetaInfo.Author);
+            authorP.Style = "Subtitle";
 
         }
 

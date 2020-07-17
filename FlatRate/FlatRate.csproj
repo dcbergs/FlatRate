@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>F6D2E26FF93C3C492ACDDF63BD33E750C6E81184</ManifestCertificateThumbprint>
@@ -112,6 +112,7 @@
     <Compile Include="Forms\SavePdfForm.Designer.cs">
       <DependentUpon>SavePdfForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\PdfAuthorInfo.cs" />
     <Compile Include="Model\Schema.cs" />
     <Compile Include="Model\TaskRow.cs" />
     <Compile Include="IO\readInput.cs" />
@@ -145,7 +146,6 @@
     <EmbeddedResource Include="Forms\SavePdfForm.resx">
       <DependentUpon>SavePdfForm.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="FlatRate_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Form1.datasource" />
     <None Include="Properties\DataSources\JobRow.datasource" />

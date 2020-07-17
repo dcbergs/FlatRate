@@ -33,14 +33,20 @@
             this.btnLoadCSV = new System.Windows.Forms.Button();
             this.btnAddPartToTask = new System.Windows.Forms.Button();
             this.jobEditBox = new System.Windows.Forms.GroupBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblPremiumDollars = new System.Windows.Forms.Label();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.lblStandardDollars = new System.Windows.Forms.Label();
+            this.txtBoxPremAdd = new System.Windows.Forms.TextBox();
+            this.lblAddPrem = new System.Windows.Forms.Label();
+            this.lblAddStd = new System.Windows.Forms.Label();
+            this.txtBoxStdAdd = new System.Windows.Forms.TextBox();
             this.comboSubcategory = new System.Windows.Forms.ComboBox();
             this.comboCategory = new System.Windows.Forms.ComboBox();
             this.lblTaskSubcategory = new System.Windows.Forms.Label();
             this.lblTaskCategory = new System.Windows.Forms.Label();
             this.txtBoxTaskID = new System.Windows.Forms.TextBox();
             this.lblTaskID = new System.Windows.Forms.Label();
-            this.lblPremiumDollars = new System.Windows.Forms.Label();
-            this.lblStandardDollars = new System.Windows.Forms.Label();
             this.lblPartsDollars = new System.Windows.Forms.Label();
             this.lblPremiumTotal = new System.Windows.Forms.Label();
             this.lblStandardTotal = new System.Windows.Forms.Label();
@@ -63,7 +69,6 @@
             this.btnExportToPDF = new System.Windows.Forms.Button();
             this.btnDeleteSelectedTask = new System.Windows.Forms.Button();
             this.tasksGridView = new System.Windows.Forms.DataGridView();
-            this.exportPDFDialog = new System.Windows.Forms.SaveFileDialog();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,14 +80,10 @@
             this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.saveDataDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadDataDialog = new System.Windows.Forms.OpenFileDialog();
-            this.txtBoxStdAdd = new System.Windows.Forms.TextBox();
-            this.lblAddStd = new System.Windows.Forms.Label();
-            this.lblAddPrem = new System.Windows.Forms.Label();
-            this.txtBoxPremAdd = new System.Windows.Forms.TextBox();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.jobEditBox.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskPartsGridView)).BeginInit();
             this.partsGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.partsGridView)).BeginInit();
@@ -91,8 +92,6 @@
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.taskBindingSource)).BeginInit();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -156,6 +155,91 @@
             this.jobEditBox.TabStop = false;
             this.jobEditBox.Text = "Edit Task";
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.lblPremiumDollars, 0, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(311, 347);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(3, 3, 1, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(62, 20);
+            this.tableLayoutPanel2.TabIndex = 28;
+            // 
+            // lblPremiumDollars
+            // 
+            this.lblPremiumDollars.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblPremiumDollars.AutoSize = true;
+            this.lblPremiumDollars.Location = new System.Drawing.Point(28, 3);
+            this.lblPremiumDollars.Margin = new System.Windows.Forms.Padding(0);
+            this.lblPremiumDollars.Name = "lblPremiumDollars";
+            this.lblPremiumDollars.Size = new System.Drawing.Size(34, 13);
+            this.lblPremiumDollars.TabIndex = 13;
+            this.lblPremiumDollars.Text = "$0.00";
+            // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 1;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.lblStandardDollars, 0, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(170, 347);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 1, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(62, 20);
+            this.tableLayoutPanel1.TabIndex = 27;
+            // 
+            // lblStandardDollars
+            // 
+            this.lblStandardDollars.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblStandardDollars.AutoSize = true;
+            this.lblStandardDollars.Location = new System.Drawing.Point(28, 3);
+            this.lblStandardDollars.Margin = new System.Windows.Forms.Padding(0);
+            this.lblStandardDollars.Name = "lblStandardDollars";
+            this.lblStandardDollars.Size = new System.Drawing.Size(34, 13);
+            this.lblStandardDollars.TabIndex = 11;
+            this.lblStandardDollars.Text = "$0.00";
+            // 
+            // txtBoxPremAdd
+            // 
+            this.txtBoxPremAdd.Location = new System.Drawing.Point(396, 347);
+            this.txtBoxPremAdd.Name = "txtBoxPremAdd";
+            this.txtBoxPremAdd.Size = new System.Drawing.Size(47, 20);
+            this.txtBoxPremAdd.TabIndex = 26;
+            this.txtBoxPremAdd.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxPremAdd_Validating);
+            // 
+            // lblAddPrem
+            // 
+            this.lblAddPrem.AutoSize = true;
+            this.lblAddPrem.Location = new System.Drawing.Point(377, 350);
+            this.lblAddPrem.Name = "lblAddPrem";
+            this.lblAddPrem.Size = new System.Drawing.Size(13, 13);
+            this.lblAddPrem.TabIndex = 25;
+            this.lblAddPrem.Text = "+";
+            // 
+            // lblAddStd
+            // 
+            this.lblAddStd.AutoSize = true;
+            this.lblAddStd.Location = new System.Drawing.Point(234, 350);
+            this.lblAddStd.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.lblAddStd.Name = "lblAddStd";
+            this.lblAddStd.Size = new System.Drawing.Size(13, 13);
+            this.lblAddStd.TabIndex = 24;
+            this.lblAddStd.Text = "+";
+            // 
+            // txtBoxStdAdd
+            // 
+            this.txtBoxStdAdd.Location = new System.Drawing.Point(253, 347);
+            this.txtBoxStdAdd.Name = "txtBoxStdAdd";
+            this.txtBoxStdAdd.Size = new System.Drawing.Size(50, 20);
+            this.txtBoxStdAdd.TabIndex = 23;
+            this.txtBoxStdAdd.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxStdAdd_Validating);
+            // 
             // comboSubcategory
             // 
             this.comboSubcategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -208,28 +292,6 @@
             this.lblTaskID.Size = new System.Drawing.Size(18, 13);
             this.lblTaskID.TabIndex = 16;
             this.lblTaskID.Text = "ID";
-            // 
-            // lblPremiumDollars
-            // 
-            this.lblPremiumDollars.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblPremiumDollars.AutoSize = true;
-            this.lblPremiumDollars.Location = new System.Drawing.Point(28, 3);
-            this.lblPremiumDollars.Margin = new System.Windows.Forms.Padding(0);
-            this.lblPremiumDollars.Name = "lblPremiumDollars";
-            this.lblPremiumDollars.Size = new System.Drawing.Size(34, 13);
-            this.lblPremiumDollars.TabIndex = 13;
-            this.lblPremiumDollars.Text = "$0.00";
-            // 
-            // lblStandardDollars
-            // 
-            this.lblStandardDollars.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblStandardDollars.AutoSize = true;
-            this.lblStandardDollars.Location = new System.Drawing.Point(28, 3);
-            this.lblStandardDollars.Margin = new System.Windows.Forms.Padding(0);
-            this.lblStandardDollars.Name = "lblStandardDollars";
-            this.lblStandardDollars.Size = new System.Drawing.Size(34, 13);
-            this.lblStandardDollars.TabIndex = 11;
-            this.lblStandardDollars.Text = "$0.00";
             // 
             // lblPartsDollars
             // 
@@ -415,7 +477,7 @@
             this.taskGroupBox.Controls.Add(this.tasksGridView);
             this.taskGroupBox.Location = new System.Drawing.Point(12, 402);
             this.taskGroupBox.Name = "taskGroupBox";
-            this.taskGroupBox.Size = new System.Drawing.Size(853, 314);
+            this.taskGroupBox.Size = new System.Drawing.Size(853, 231);
             this.taskGroupBox.TabIndex = 2;
             this.taskGroupBox.TabStop = false;
             this.taskGroupBox.Text = "Task List";
@@ -449,15 +511,10 @@
             this.tasksGridView.Location = new System.Drawing.Point(7, 45);
             this.tasksGridView.Name = "tasksGridView";
             this.tasksGridView.ReadOnly = true;
-            this.tasksGridView.Size = new System.Drawing.Size(840, 263);
+            this.tasksGridView.Size = new System.Drawing.Size(840, 177);
             this.tasksGridView.TabIndex = 0;
             this.tasksGridView.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.tasksGridView_CellDoubleClick);
             this.tasksGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.tasksGridView_CellFormatting);
-            // 
-            // exportPDFDialog
-            // 
-            this.exportPDFDialog.DefaultExt = "pdf";
-            this.exportPDFDialog.Filter = "PDF (*.pdf) | *.pdf";
             // 
             // menuStrip1
             // 
@@ -521,87 +578,24 @@
             this.saveDataDialog.DefaultExt = "xml";
             this.saveDataDialog.Filter = "XML (*.xml) | *.xml";
             // 
-            // txtBoxStdAdd
-            // 
-            this.txtBoxStdAdd.Location = new System.Drawing.Point(253, 347);
-            this.txtBoxStdAdd.Name = "txtBoxStdAdd";
-            this.txtBoxStdAdd.Size = new System.Drawing.Size(50, 20);
-            this.txtBoxStdAdd.TabIndex = 23;
-            this.txtBoxStdAdd.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxStdAdd_Validating);
-            // 
-            // lblAddStd
-            // 
-            this.lblAddStd.AutoSize = true;
-            this.lblAddStd.Location = new System.Drawing.Point(234, 350);
-            this.lblAddStd.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
-            this.lblAddStd.Name = "lblAddStd";
-            this.lblAddStd.Size = new System.Drawing.Size(13, 13);
-            this.lblAddStd.TabIndex = 24;
-            this.lblAddStd.Text = "+";
-            // 
-            // lblAddPrem
-            // 
-            this.lblAddPrem.AutoSize = true;
-            this.lblAddPrem.Location = new System.Drawing.Point(377, 350);
-            this.lblAddPrem.Name = "lblAddPrem";
-            this.lblAddPrem.Size = new System.Drawing.Size(13, 13);
-            this.lblAddPrem.TabIndex = 25;
-            this.lblAddPrem.Text = "+";
-            // 
-            // txtBoxPremAdd
-            // 
-            this.txtBoxPremAdd.Location = new System.Drawing.Point(396, 347);
-            this.txtBoxPremAdd.Name = "txtBoxPremAdd";
-            this.txtBoxPremAdd.Size = new System.Drawing.Size(47, 20);
-            this.txtBoxPremAdd.TabIndex = 26;
-            this.txtBoxPremAdd.Validating += new System.ComponentModel.CancelEventHandler(this.txtBoxPremAdd_Validating);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.lblStandardDollars, 0, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(170, 347);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 1, 3);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(62, 20);
-            this.tableLayoutPanel1.TabIndex = 27;
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.ColumnCount = 1;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Controls.Add(this.lblPremiumDollars, 0, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(311, 347);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(3, 3, 1, 3);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(62, 20);
-            this.tableLayoutPanel2.TabIndex = 28;
-            // 
-            // taskRowBindingSource
-            // 
-            this.taskRowBindingSource.DataSource = typeof(FlatRate.TaskRow);
-            // 
-            // Form1
+            // PrimaryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(877, 728);
+            this.ClientSize = new System.Drawing.Size(877, 633);
             this.Controls.Add(this.taskGroupBox);
             this.Controls.Add(this.partsGroupBox);
             this.Controls.Add(this.jobEditBox);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "PrimaryForm";
             this.Text = "Favinger FlatRate";
             this.jobEditBox.ResumeLayout(false);
             this.jobEditBox.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskPartsGridView)).EndInit();
             this.partsGroupBox.ResumeLayout(false);
             this.partsGroupBox.PerformLayout();
@@ -612,10 +606,6 @@
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.partBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.taskBindingSource)).EndInit();
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.taskRowBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -654,7 +644,6 @@
         private System.Windows.Forms.Label lblTaskID;
         private System.Windows.Forms.Button btnDeleteSelectedTask;
         private System.Windows.Forms.Button btnExportToPDF;
-        private System.Windows.Forms.SaveFileDialog exportPDFDialog;
         private System.Windows.Forms.Label lblTaskSubcategory;
         private System.Windows.Forms.Label lblTaskCategory;
         private System.Windows.Forms.MenuStrip menuStrip1;
