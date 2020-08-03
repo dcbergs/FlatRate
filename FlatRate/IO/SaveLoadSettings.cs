@@ -10,6 +10,7 @@ namespace FlatRate
         public SaveLoadSettings()
         {
             filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FlatRate");
+            Directory.CreateDirectory(filename);
         }
 
         public void saveRates()

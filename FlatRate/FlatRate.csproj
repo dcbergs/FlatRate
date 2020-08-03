@@ -105,6 +105,7 @@
     <Compile Include="Forms\RatesForm.Designer.cs">
       <DependentUpon>RatesForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="IO\OutputTasksCsv.cs" />
     <Compile Include="IO\SaveLoadSettings.cs" />
     <Compile Include="Forms\SavePdfForm.cs">
       <SubType>Form</SubType>

@@ -81,6 +81,8 @@
             this.saveDataDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadDataDialog = new System.Windows.Forms.OpenFileDialog();
             this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnExportToCSV = new System.Windows.Forms.Button();
+            this.saveTaskCsvDialog = new System.Windows.Forms.SaveFileDialog();
             this.jobEditBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -472,6 +474,7 @@
             // 
             // taskGroupBox
             // 
+            this.taskGroupBox.Controls.Add(this.btnExportToCSV);
             this.taskGroupBox.Controls.Add(this.btnExportToPDF);
             this.taskGroupBox.Controls.Add(this.btnDeleteSelectedTask);
             this.taskGroupBox.Controls.Add(this.tasksGridView);
@@ -578,6 +581,20 @@
             this.saveDataDialog.DefaultExt = "xml";
             this.saveDataDialog.Filter = "XML (*.xml) | *.xml";
             // 
+            // btnExportToCSV
+            // 
+            this.btnExportToCSV.Location = new System.Drawing.Point(306, 16);
+            this.btnExportToCSV.Name = "btnExportToCSV";
+            this.btnExportToCSV.Size = new System.Drawing.Size(137, 23);
+            this.btnExportToCSV.TabIndex = 5;
+            this.btnExportToCSV.Text = "Export Task List to CSV";
+            this.btnExportToCSV.UseVisualStyleBackColor = true;
+            this.btnExportToCSV.Click += new System.EventHandler(this.btnExportToCSV_Click);
+            // 
+            // saveTaskCsvDialog
+            // 
+            this.saveTaskCsvDialog.Filter = "CSV (*.csv) | *.csv";
+            // 
             // PrimaryForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -666,6 +683,8 @@
         private System.Windows.Forms.TextBox txtBoxStdAdd;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.Button btnExportToCSV;
+        private System.Windows.Forms.SaveFileDialog saveTaskCsvDialog;
     }
 }
 

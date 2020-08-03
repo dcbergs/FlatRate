@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlatRate.IO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -717,12 +718,20 @@ namespace FlatRate
                 try
                 {
                     flatRateData.WriteXml(saveDataDialog.FileName);
+                }
+                catch (IOException err)
+                {
+                    Console.WriteLine(err.Message);
+                    MessageBox.Show("This file is already open. Please close the file and try again." + err.Message, "Error in file access", MessageBoxButtons.OK);
+                }
+                try
+                {
                     //also save filepath as most recent
                     saveLoader.saveMostRecent(saveDataDialog.FileName);
                 }
                 catch (IOException)
                 {
-                    MessageBox.Show("This file is already open. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
+                    //if saving most recent filepath doesn't work, it'll just begin empty each time
                 }
 
             }
@@ -807,7 +816,7 @@ namespace FlatRate
             flatRateData.Tables["Parts"].DefaultView.RowFilter += "OR Description LIKE '%" + searchTerm + "%'";
         }
 
-        //----------------------------------------------------------------------EXPORT TO PDF---------------------------------------------
+        //----------------------------------------------------------------------EXPORT TO PDF/CSV---------------------------------------------
         private void btnExportToPDF_Click(object sender, EventArgs e)
         {
             //first a form to get info on title, author, also dialog prompt for image source
@@ -816,5 +825,19 @@ namespace FlatRate
 
         }
 
+        private void btnExportToCSV_Click(object sender, EventArgs e)
+        {
+            if(saveTaskCsvDialog.ShowDialog() == DialogResult.OK && saveTaskCsvDialog.FileName != "")
+            {
+                try
+                {
+                    OutputTasksCsv.export(flatRateData, saveTaskCsvDialog.FileName);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("This file is already open. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
+                }
+            }
+        }
     }
 }
