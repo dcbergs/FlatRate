@@ -102,7 +102,7 @@
             this.Controls.Add(this.lblPremiumRate);
             this.Controls.Add(this.lblStandardRate);
             this.Name = "RatesForm";
-            this.Text = "RatesForm";
+            this.Text = "Rates";
             this.ResumeLayout(false);
             this.PerformLayout();
 

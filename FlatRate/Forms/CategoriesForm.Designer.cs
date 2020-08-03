@@ -202,7 +202,7 @@
             this.Controls.Add(this.subcategoryGridView);
             this.Controls.Add(this.categoryGridView);
             this.Name = "CategoriesForm";
-            this.Text = "CategoriesForm";
+            this.Text = "Categories";
             ((System.ComponentModel.ISupportInitialize)(this.categoryGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.subcategoryGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tasksGridView)).EndInit();

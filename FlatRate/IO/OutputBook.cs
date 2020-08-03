@@ -1,6 +1,5 @@
 ﻿using FlatRate.Model;
 using MigraDoc.DocumentObjectModel;
-using MigraDoc.DocumentObjectModel.Internals;
 using MigraDoc.DocumentObjectModel.Shapes;
 using MigraDoc.DocumentObjectModel.Tables;
 using MigraDoc.Rendering;
@@ -14,15 +13,15 @@ namespace FlatRate
 {
     class OutputBook
     {
-        private string filename;
-        private DataSet data;
-        private PdfAuthorInfo MetaInfo;
+        private readonly string filename;
+        private readonly DataSet data;
+        private readonly PdfAuthorInfo MetaInfo;
 
         public OutputBook(string filename, DataSet data, PdfAuthorInfo info)
         {
             this.filename = filename;
             this.data = data;
-            this.MetaInfo = info;
+            MetaInfo = info;
         }
 
         //helper function for loading resource images rather than from file path
