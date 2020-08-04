@@ -208,6 +208,7 @@ namespace FlatRate
                 EnumerableRowCollection<DataRow> subcategoryQuery =
                     from subcats in data.Tables["Subcategories"].AsEnumerable()
                     where subcats.Field<Int32>("CategoryID") == category.Field<Int32>("ID")
+                    orderby subcats.Field<String>("Title")
                     select subcats;
 
                 foreach(DataRow subcategory in subcategoryQuery)
@@ -242,6 +243,7 @@ namespace FlatRate
                         join taskpart in data.Tables["Tasks_Parts"].AsEnumerable()
                         on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
                         where task.Field<Int32>("SubcategoryID") == subcategory.Field<Int32>("ID")
+                        orderby task.Field<String>("ID")
                          select new
                          {
                              id = task.Field<String>("ID"),
@@ -261,6 +263,10 @@ namespace FlatRate
                         idparagraph.Style = "id";
                         idparagraph.Format.Alignment = ParagraphAlignment.Center;
                         row.Cells[0].VerticalAlignment = VerticalAlignment.Center;
+
+                        Paragraph hoursParagraph = row.Cells[0].AddParagraph(task.hrs.ToString("F"));
+                        hoursParagraph.Style = "id";
+                        hoursParagraph.Format.Alignment = ParagraphAlignment.Center;
 
                         Paragraph titleParagraph = row.Cells[1].AddParagraph(task.title);
                         
