@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PrimaryForm));
             this.openPartsListDialog = new System.Windows.Forms.OpenFileDialog();
             this.btnLoadCSV = new System.Windows.Forms.Button();
             this.btnAddPartToTask = new System.Windows.Forms.Button();
@@ -66,6 +67,7 @@
             this.txtBoxSearchParts = new System.Windows.Forms.TextBox();
             this.partsGridView = new System.Windows.Forms.DataGridView();
             this.taskGroupBox = new System.Windows.Forms.GroupBox();
+            this.btnExportToCSV = new System.Windows.Forms.Button();
             this.btnExportToPDF = new System.Windows.Forms.Button();
             this.btnDeleteSelectedTask = new System.Windows.Forms.Button();
             this.tasksGridView = new System.Windows.Forms.DataGridView();
@@ -76,13 +78,14 @@
             this.toolStripEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.categoriesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ratesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.saveDataDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadDataDialog = new System.Windows.Forms.OpenFileDialog();
-            this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.btnExportToCSV = new System.Windows.Forms.Button();
             this.saveTaskCsvDialog = new System.Windows.Forms.SaveFileDialog();
+            this.toolStripHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.jobEditBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -485,6 +488,16 @@
             this.taskGroupBox.TabStop = false;
             this.taskGroupBox.Text = "Task List";
             // 
+            // btnExportToCSV
+            // 
+            this.btnExportToCSV.Location = new System.Drawing.Point(306, 16);
+            this.btnExportToCSV.Name = "btnExportToCSV";
+            this.btnExportToCSV.Size = new System.Drawing.Size(137, 23);
+            this.btnExportToCSV.TabIndex = 5;
+            this.btnExportToCSV.Text = "Export Task List to CSV";
+            this.btnExportToCSV.UseVisualStyleBackColor = true;
+            this.btnExportToCSV.Click += new System.EventHandler(this.btnExportToCSV_Click);
+            // 
             // btnExportToPDF
             // 
             this.btnExportToPDF.Location = new System.Drawing.Point(157, 16);
@@ -523,7 +536,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolStripEdit});
+            this.toolStripEdit,
+            this.toolStripHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(877, 24);
@@ -581,19 +595,24 @@
             this.saveDataDialog.DefaultExt = "xml";
             this.saveDataDialog.Filter = "XML (*.xml) | *.xml";
             // 
-            // btnExportToCSV
-            // 
-            this.btnExportToCSV.Location = new System.Drawing.Point(306, 16);
-            this.btnExportToCSV.Name = "btnExportToCSV";
-            this.btnExportToCSV.Size = new System.Drawing.Size(137, 23);
-            this.btnExportToCSV.TabIndex = 5;
-            this.btnExportToCSV.Text = "Export Task List to CSV";
-            this.btnExportToCSV.UseVisualStyleBackColor = true;
-            this.btnExportToCSV.Click += new System.EventHandler(this.btnExportToCSV_Click);
-            // 
             // saveTaskCsvDialog
             // 
             this.saveTaskCsvDialog.Filter = "CSV (*.csv) | *.csv";
+            // 
+            // toolStripHelp
+            // 
+            this.toolStripHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.toolStripHelp.Name = "toolStripHelp";
+            this.toolStripHelp.Size = new System.Drawing.Size(44, 20);
+            this.toolStripHelp.Text = "Help";
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
+            this.aboutToolStripMenuItem.Text = "About...";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // PrimaryForm
             // 
@@ -604,6 +623,7 @@
             this.Controls.Add(this.partsGroupBox);
             this.Controls.Add(this.jobEditBox);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PrimaryForm";
             this.Text = "Favinger FlatRate";
@@ -685,6 +705,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button btnExportToCSV;
         private System.Windows.Forms.SaveFileDialog saveTaskCsvDialog;
+        private System.Windows.Forms.ToolStripMenuItem toolStripHelp;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

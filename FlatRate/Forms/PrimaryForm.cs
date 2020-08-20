@@ -93,7 +93,21 @@ namespace FlatRate
                 }
                 catch (Exception except)
                 {
-                    MessageBox.Show("Be sure the file has a header with 'Name', 'Description', & 'UnitCost' columns and no commas in names. " + except.Message, "Error Reading File!", MessageBoxButtons.OK);
+
+                    if(except is System.FormatException)
+                    {
+                        MessageBox.Show("The file contains improperly formatted prices " +
+                            "in the unitcost column.",
+                            "Error Reading File!", MessageBoxButtons.OK);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Be sure that the file: \n" +
+                            "- is not open in another program\n" +
+                            "- is saved as CSV (comma separated values\n" +
+                            "- has a header with 'Name', 'Description', & 'UnitCost' columns.",
+                            "Error Reading File!", MessageBoxButtons.OK);
+                    }
                 }
                 //need to update all job costs
                 //might make a variation on this function to return/notify how many tasks/parts were affected
@@ -722,7 +736,7 @@ namespace FlatRate
                 catch (IOException err)
                 {
                     Console.WriteLine(err.Message);
-                    MessageBox.Show("This file is already open. Please close the file and try again." + err.Message, "Error in file access", MessageBoxButtons.OK);
+                    MessageBox.Show("This file is already open or corrupted. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
                 }
                 try
                 {
@@ -838,6 +852,13 @@ namespace FlatRate
                     MessageBox.Show("This file is already open. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
                 }
             }
+        }
+
+
+        //--------------------------------------------------------------------DOCUMENTATION---------------------------------------------------
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

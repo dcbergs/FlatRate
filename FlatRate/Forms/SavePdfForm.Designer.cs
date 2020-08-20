@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SavePdfForm));
             this.pdfTitleLabel = new System.Windows.Forms.Label();
             this.pdfTitleText = new System.Windows.Forms.TextBox();
             this.authorLabel = new System.Windows.Forms.Label();
@@ -136,7 +137,8 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::FlatRate.Properties.Resources.logo;
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(9, 42);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(144, 65);
@@ -174,6 +176,7 @@
             this.Controls.Add(this.authorLabel);
             this.Controls.Add(this.pdfTitleText);
             this.Controls.Add(this.pdfTitleLabel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SavePdfForm";
             this.Text = "Save PDF";
             this.coverImageGroupBox.ResumeLayout(false);

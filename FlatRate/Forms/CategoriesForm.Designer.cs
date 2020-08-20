@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CategoriesForm));
             this.categoryGridView = new System.Windows.Forms.DataGridView();
             this.subcategoryGridView = new System.Windows.Forms.DataGridView();
             this.tasksGridView = new System.Windows.Forms.DataGridView();
@@ -201,6 +202,7 @@
             this.Controls.Add(this.tasksGridView);
             this.Controls.Add(this.subcategoryGridView);
             this.Controls.Add(this.categoryGridView);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CategoriesForm";
             this.Text = "Categories";
             ((System.ComponentModel.ISupportInitialize)(this.categoryGridView)).EndInit();

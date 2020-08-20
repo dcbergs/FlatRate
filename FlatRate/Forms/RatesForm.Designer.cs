@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RatesForm));
             this.lblStandardRate = new System.Windows.Forms.Label();
             this.lblPremiumRate = new System.Windows.Forms.Label();
             this.txtBoxStandardRate = new System.Windows.Forms.TextBox();
@@ -101,6 +102,7 @@
             this.Controls.Add(this.txtBoxStandardRate);
             this.Controls.Add(this.lblPremiumRate);
             this.Controls.Add(this.lblStandardRate);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RatesForm";
             this.Text = "Rates";
             this.ResumeLayout(false);
