@@ -1,4 +1,5 @@
 ﻿using FlatRate.IO;
+using FlatRate.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +13,7 @@ namespace FlatRate
 {
     public partial class PrimaryForm : Form
     {
-        private DataSet flatRateData = new DataSet("FlatRateData");
-
+        DataManager dataManager = DataManager.GetInstance();
         //holds parts in the edit/new task field while the task is not yet saved
         private List<TaskRow> temporaryParts = new List<TaskRow>();
         //formatting and error message variables
@@ -25,9 +25,6 @@ namespace FlatRate
         public PrimaryForm()
         {
             InitializeComponent();
-
-            //defines flatRateData with Schema class
-            DefineTable();
 
             //auto-load rate data
             try
@@ -47,7 +44,7 @@ namespace FlatRate
             {
                 try
                 {
-                    flatRateData.ReadXml(previousFilePath);
+                    dataManager.ReadXML(previousFilePath);
                     updateTaskListDisplay();
                 }
                 catch
@@ -72,12 +69,6 @@ namespace FlatRate
             
         }
 
-        private void DefineTable()
-        {
-            Schema schema = new Schema(flatRateData);
-            schema.setupData();
-        }
-
         //----------------------------------------------------------------------LOAD CSV OF PARTS--------------------------------
         private void btnLoadCSV_Click(object sender, EventArgs e)
         {
@@ -88,8 +79,8 @@ namespace FlatRate
                 try
                 {
                     //read csv input and put into partList object
-                    readInput partsInput = new readInput(openPartsListDialog.FileName);
-                    partsInput.generatePartsList(flatRateData);
+                    ReadInput partsInput = new ReadInput(openPartsListDialog.FileName);
+                    partsInput.generatePartsList();
                 }
                 catch (Exception except)
                 {
@@ -214,30 +205,14 @@ namespace FlatRate
 
         private void updateTaskListDisplay()
         {
-            var taskrows =
-                (from task in flatRateData.Tables["Tasks"].AsEnumerable()
-                 join taskpart in flatRateData.Tables["Tasks_Parts"].AsEnumerable()
-                 on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
-                 select new
-                 {
-                     id = task.Field<String>("ID"),
-                     title = task.Field<String>("Title"),
-                     desc = task.Field<String>("Description"),
-                     cat = task.GetParentRow("taskCategories").Field<String>("Title"),
-                     subcat = task.GetParentRow("taskSubcategories").Field<String>("Title"),
-                     hrs = task.Field<float>("Hours"),
-                     stdtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
-                     premtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
-                 }).ToList();
-
-            taskBindingSource.DataSource = taskrows;
+            taskBindingSource.DataSource = dataManager.GetTaskSummaries();
             tasksGridView.DataSource = taskBindingSource;
         }
 
         private void updateComboBoxes()
         {
             //category combo box
-            comboCategory.DataSource = flatRateData.Tables["Categories"];
+            comboCategory.DataSource = DataManager.Categories;
             comboCategory.DisplayMember = "Title";
             comboCategory.ValueMember = "ID";
 
@@ -249,10 +224,7 @@ namespace FlatRate
                 if (row != null)
                 {
                     //query for appropriate subcategories
-                    EnumerableRowCollection<DataRow> subcategoryQuery2 =
-                        from subcategory in flatRateData.Tables["Subcategories"].AsEnumerable()
-                        where subcategory.Field<Int32>("CategoryID") == Convert.ToInt32(row["ID"])
-                        select subcategory;
+                    EnumerableRowCollection<DataRow> subcategoryQuery2 = dataManager.GetSubcategoriesByCategoryId(Convert.ToInt32(row["Id"]));
 
                     DataView view = subcategoryQuery2.AsDataView();
                     comboSubcategory.DataSource = view;
@@ -265,7 +237,7 @@ namespace FlatRate
 
         private void updateParts()
         {
-            partBindingSource.DataSource = flatRateData.Tables["Parts"];
+            partBindingSource.DataSource = DataManager.Parts;
             partsGridView.DataSource = partBindingSource;
             partsGridView.Columns[0].HeaderText = "Name";
             partsGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
@@ -465,8 +437,9 @@ namespace FlatRate
                 string newID = txtBoxTaskID.Text;
 
                 bool overwrite = true; //default to true so task will be saved unless it's a duplicate
-                DataRow row = flatRateData.Tables["Tasks"].Rows.Find(newID);
-                if (row != null)
+                bool taskExists = dataManager.IsTask(newID);
+                DataRow row = DataManager.Tasks.Rows.Find(newID);
+                if (!taskExists)
                 {
                     overwrite = false; //it's a duplicate, so don't overwrite by default
                     string title = "Duplicate Task ID";
@@ -480,6 +453,7 @@ namespace FlatRate
 
                 if (overwrite)
                 {
+                    //DTO for task?? pass taskparts temporary list to DataManager function too?
                     //if duplicate, edit
                     if (row != null)
                     {
