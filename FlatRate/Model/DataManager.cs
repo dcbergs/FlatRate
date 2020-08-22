@@ -12,11 +12,12 @@ namespace FlatRate.Model
     {
         private static readonly DataManager instance = new DataManager();
 
-        public static DataSet data { get; } = new DataSet();
-        public static DataTable Categories { get { return data.Tables["Categories"]; } }
-        public static DataTable Subcategories { get { return data.Tables["Subcategories"]; } }
-        public static DataTable Parts { get { return data.Tables["Parts"]; } }
-        public static DataTable Tasks { get { return data.Tables["Tasks"]; } }
+        public static DataSet Data { get; private set; }
+        public static DataTable Categories { get { return Data.Tables["Categories"]; } }
+        public static DataTable Subcategories { get { return Data.Tables["Subcategories"]; } }
+        public static DataTable Parts { get { return Data.Tables["Parts"]; } }
+        public static DataTable Tasks { get { return Data.Tables["Tasks"]; } }
+        public static DataTable Tasks_Parts { get { return Data.Tables["Tasks_Parts"]; } }
 
         private DataManager()
         {
@@ -31,7 +32,7 @@ namespace FlatRate.Model
         private void setupTables()
         {
             //define Tasks table
-            DataTable tasks = data.Tables.Add("Tasks");
+            DataTable tasks = Data.Tables.Add("Tasks");
 
             DataColumn pkTaskID = tasks.Columns.Add("ID", typeof(string));
             tasks.Columns.Add("Title", typeof(string));
@@ -44,21 +45,21 @@ namespace FlatRate.Model
             tasks.PrimaryKey = new DataColumn[] { pkTaskID };
 
             //define parts table
-            DataTable parts = data.Tables.Add("Parts");
+            DataTable parts = Data.Tables.Add("Parts");
             DataColumn pkPartID = parts.Columns.Add("ID", typeof(string));
             parts.Columns.Add("Description", typeof(string));
             parts.Columns.Add("UnitPrice", typeof(float));
             parts.PrimaryKey = new DataColumn[] { pkPartID };
 
             //define Categories table
-            DataTable categories = data.Tables.Add("Categories");
+            DataTable categories = Data.Tables.Add("Categories");
             DataColumn pkCategoryID = categories.Columns.Add("ID", typeof(Int32));
             pkCategoryID.AutoIncrement = true;
             categories.Columns.Add("Title", typeof(string));
             categories.PrimaryKey = new DataColumn[] { pkCategoryID };
 
             //define subcategories table
-            DataTable subcategories = data.Tables.Add("Subcategories");
+            DataTable subcategories = Data.Tables.Add("Subcategories");
             DataColumn pkSubcategoryID = subcategories.Columns.Add("ID", typeof(Int32));
             pkSubcategoryID.AutoIncrement = true;
             subcategories.Columns.Add("Title", typeof(string));
@@ -66,36 +67,36 @@ namespace FlatRate.Model
             subcategories.PrimaryKey = new DataColumn[] { pkSubcategoryID };
 
             //define tasks_parts table
-            DataTable tasksparts = data.Tables.Add("Tasks_Parts");
+            DataTable tasksparts = Data.Tables.Add("Tasks_Parts");
             DataColumn fkTaskID = tasksparts.Columns.Add("TaskID", typeof(string));
             DataColumn fkPartID = tasksparts.Columns.Add("PartID", typeof(string));
             tasksparts.Columns.Add("Quantity", typeof(float));
             tasksparts.PrimaryKey = new DataColumn[] { fkTaskID, fkPartID };
 
             //Tasks.CategoryID -> Categories.ID relationship
-            DataRelation taskCategoryRelation = data.Relations.Add("TaskCategories",
-                data.Tables["Categories"].Columns["ID"],
-                data.Tables["Tasks"].Columns["CategoryID"]);
+            DataRelation taskCategoryRelation = Data.Relations.Add("TaskCategories",
+                Data.Tables["Categories"].Columns["ID"],
+                Data.Tables["Tasks"].Columns["CategoryID"]);
 
             //Tasks.SubcategoryID -> Subcategories.ID relationship
-            DataRelation taskSubcategoryRelation = data.Relations.Add("TaskSubcategories",
-                data.Tables["Subcategories"].Columns["ID"],
-                data.Tables["Tasks"].Columns["SubcategoryID"]);
+            DataRelation taskSubcategoryRelation = Data.Relations.Add("TaskSubcategories",
+                Data.Tables["Subcategories"].Columns["ID"],
+                Data.Tables["Tasks"].Columns["SubcategoryID"]);
 
             //Subcategories.CategoryID -> Categories.ID relationship
-            DataRelation subcategoryCategoryRelation = data.Relations.Add("SubcategoryCategories",
-                data.Tables["Categories"].Columns["ID"],
-                data.Tables["Subcategories"].Columns["CategoryID"]);
+            DataRelation subcategoryCategoryRelation = Data.Relations.Add("SubcategoryCategories",
+                Data.Tables["Categories"].Columns["ID"],
+                Data.Tables["Subcategories"].Columns["CategoryID"]);
 
             //Tasks_Parts.TaskID -> Tasks.ID relationship
-            DataRelation taskPartsTaskRelation = data.Relations.Add("taskPartsTasks",
-                data.Tables["Tasks"].Columns["ID"],
-                data.Tables["Tasks_Parts"].Columns["TaskID"]);
+            DataRelation taskPartsTaskRelation = Data.Relations.Add("taskPartsTasks",
+                Data.Tables["Tasks"].Columns["ID"],
+                Data.Tables["Tasks_Parts"].Columns["TaskID"]);
 
             //Tasks_Parts.PartID -> Parts.ID relationship
-            DataRelation taskPartsPartRelation = data.Relations.Add("taskPartsParts",
-                data.Tables["Parts"].Columns["ID"],
-                data.Tables["Tasks_Parts"].Columns["PartID"]);
+            DataRelation taskPartsPartRelation = Data.Relations.Add("taskPartsParts",
+                Data.Tables["Parts"].Columns["ID"],
+                Data.Tables["Tasks_Parts"].Columns["PartID"]);
 
 
         }
@@ -103,8 +104,8 @@ namespace FlatRate.Model
         public List<TaskSummary> GetTaskSummaries()
         {
             return
-                (from task in data.Tables["Tasks"].AsEnumerable()
-                 join taskpart in data.Tables["Tasks_Parts"].AsEnumerable()
+                (from task in Data.Tables["Tasks"].AsEnumerable()
+                 join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
                  on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
                  select new TaskSummary(
                      task.Field<String>("ID"),
@@ -121,23 +122,37 @@ namespace FlatRate.Model
 
         public void ReadXML(String filepath)
         {
-            data.ReadXml(filepath);
+            Data.ReadXml(filepath);
+        }
+
+        public void WriteXML(String filepath)
+        {
+            Data.WriteXml(filepath);
+        }
+
+        public void LoadXML(String filepath)
+        {
+            Data.EnforceConstraints = false;
+            Data = new DataSet();
+            setupTables();
+            Data.ReadXml(filepath);
+            Data.EnforceConstraints = true;
         }
 
         public void AddNewPart(Part part)
         {
             //if it doesn't contain ID already,
-            if (data.Tables["Parts"].Rows.Find(part.Id) == null)
+            if (Data.Tables["Parts"].Rows.Find(part.Id) == null)
             {
-                DataRow newPart = data.Tables["Parts"].NewRow();
+                DataRow newPart = Data.Tables["Parts"].NewRow();
                 newPart["ID"] = part.Id;
                 newPart["Description"] = part.Description;
                 newPart["UnitPrice"] = part.UnitPrice;
-                data.Tables["Parts"].Rows.Add(newPart);
+                Data.Tables["Parts"].Rows.Add(newPart);
             }
             else
             {
-                DataRow row = data.Tables["Parts"].Rows.Find(part.Id);
+                DataRow row = Data.Tables["Parts"].Rows.Find(part.Id);
                 row["Description"] = part.Description;
                 row["UnitPrice"] = part.UnitPrice;
             }
@@ -154,6 +169,145 @@ namespace FlatRate.Model
         public bool IsTask(String Id)
         {
             return Tasks.Rows.Contains(Id);
+        }
+
+        public void AddOrUpdateTask(Task task, List<TaskRow> parts)
+        {
+            DataRow row;
+            bool isUpdate = IsTask(task.Id);
+            //row already exists, so update it
+            if (isUpdate)
+            {
+                row = Tasks.Rows.Find(task.Id);
+            }
+            //row does not yet exist, create it
+            else
+            {
+                row = Tasks.NewRow();
+                row["ID"] = task.Id;
+            }
+
+            row["Title"] = task.Title;
+            row["Description"] = task.Description;
+            row["CategoryID"] = task.CategoryId;
+            row["SubcategoryID"] = task.SubcategoryId;
+            row["Hours"] = task.Hours;
+            row["StdAddOn"] = task.StandardAddOn;
+            row["PremAddOn"] = task.PremiumAddOn;
+
+            if (!isUpdate)
+            {
+                Tasks.Rows.Add(row);
+            }
+
+            //also edit tasks_parts
+            //remove prior associations with this Task.ID, if any
+            var toRemove =
+                from taskpart in Tasks_Parts.AsEnumerable()
+                where taskpart.Field<string>("TaskID") == task.Id
+                select taskpart;
+            foreach (var removeRow in toRemove.ToList())
+            {
+                removeRow.Delete();
+            }
+            //add new associations with this Task.ID
+            foreach (TaskRow part in parts)
+            {
+                DataRow newPart = Tasks_Parts.NewRow();
+                newPart["TaskID"] = task.Id;
+                newPart["PartID"] = part.id;
+                newPart["Quantity"] = part.quantity;
+                Tasks_Parts.Rows.Add(newPart);
+            }
+        }
+
+        public Task GetTaskById(String id)
+        {
+            if (!Tasks.Rows.Contains(id))
+            {
+                throw new ArgumentException("task with such id does not exist");
+            }
+            DataRow row = Tasks.Rows.Find(id);
+            Task editTask = new Task
+            {
+                Id = id,
+                Title = row.Field<String>("Title"),
+                Description = row.Field<String>("Description"),
+                CategoryId = row.Field<Int32>("CategoryID"),
+                SubcategoryId = row.Field<Int32>("SubcategoryID"),
+                Hours = row.Field<float>("Hours"),
+                StandardAddOn = row.Field<float>("StdAddOn"),
+                PremiumAddOn = row.Field<float>("PremAddOn"),
+            };
+            return editTask;
+        }
+
+        public void DeleteTask(String id)
+        {
+            //query Tasks_Parts for removal
+            EnumerableRowCollection<DataRow> taskspartsquery =
+                from removalRow in Tasks_Parts.AsEnumerable()
+                where removalRow.Field<String>("TaskID") == id
+                select removalRow;
+
+            Tasks_Parts.AcceptChanges();
+
+            foreach (DataRow taskspartsrow in taskspartsquery)
+            {
+                taskspartsrow.Delete();
+            }
+            Tasks_Parts.AcceptChanges();
+
+            //remove the task itself
+            Tasks.Rows.Find(id).Delete();
+            Tasks.AcceptChanges();
+        }
+
+        public DataView GetSubcategoriesViewByCategory(int categoryId)
+        {
+            EnumerableRowCollection<DataRow> subcategoryQuery =
+                from subcategory in Subcategories.AsEnumerable()
+                where subcategory.Field<Int32>("CategoryID") == categoryId
+                select subcategory;
+
+            return subcategoryQuery.AsDataView();
+        }
+
+        public List<TaskRow> TemporaryPartsByTask(String taskId)
+        {
+            List<TaskRow> temporaryParts = new List<TaskRow>();
+            //select all rows from tasks_parts belonging to taskID
+            var taskpartsquery =
+                from taskparts in Tasks_Parts.AsEnumerable()
+                where taskparts.Field<String>("TaskID") == taskId
+                select taskparts;
+
+            //for each row, extract data and make a new TaskRow object
+            foreach (DataRow taskpart in taskpartsquery)
+            {
+                string newid = taskpart.Field<String>("PartID");
+                string newDescription = taskpart.GetParentRow("taskPartsParts").Field<String>("Description");
+                float newCost = taskpart.GetParentRow("taskPartsParts").Field<float>("UnitPrice");
+                float newQuantity = taskpart.Field<float>("Quantity");
+                TaskRow newPart = new TaskRow(newid, newDescription, newCost, newQuantity);
+
+                temporaryParts.Add(newPart);
+            }
+
+            return temporaryParts;
+        }
+
+        public void FilterParts(String searchTerm)
+        {
+            Parts.DefaultView.RowFilter = "ID LIKE '%" + searchTerm + "%'";
+            Parts.DefaultView.RowFilter += "OR Description LIKE '%" + searchTerm + "%'";
+        }
+
+        public void AddCategory(String categoryName)
+        {
+            DataRow row = Categories.NewRow();
+            row["Title"] = categoryName;
+            Categories.Rows.Add(row);
         }
     }
 }

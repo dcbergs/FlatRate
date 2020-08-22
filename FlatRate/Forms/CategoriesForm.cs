@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlatRate.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,18 +14,17 @@ namespace FlatRate
 {
     public partial class CategoriesForm : Form
     {
-        private DataSet flatRateData;
+        DataManager dataManager = DataManager.GetInstance();
         private static CultureInfo ci = new CultureInfo("en-us");
         ErrorProvider errorProvider1 = new ErrorProvider();
 
         //-------------------------------------------------INITIALIZE WITH DATASET--------------------------------------------
-        public CategoriesForm(DataSet data)
+        public CategoriesForm()
         {
             InitializeComponent();
-            flatRateData = data;
 
             //define categoryGridView TODO format columns
-            categoriesBindingSource.DataSource = flatRateData.Tables["Categories"];
+            categoriesBindingSource.DataSource = DataManager.Categories;
             categoryGridView.DataSource = categoriesBindingSource;
             categoryGridView.Columns[0].Visible = false;
 
@@ -39,9 +39,7 @@ namespace FlatRate
         {
             if (!String.IsNullOrWhiteSpace(txtCategory.Text))
             {
-                DataRow row = flatRateData.Tables["Categories"].NewRow();
-                row["Title"] = ci.TextInfo.ToTitleCase(txtCategory.Text.ToLower());
-                flatRateData.Tables["Categories"].Rows.Add(row);
+                dataManager.AddCategory(ci.TextInfo.ToTitleCase(txtCategory.Text.ToLower()));
                 txtCategory.Text = "";
             }
         }
@@ -51,7 +49,7 @@ namespace FlatRate
             string potentialCategory = txtCategory.Text;
             potentialCategory = ci.TextInfo.ToTitleCase(potentialCategory.ToLower());
             DataRow[] existingRows;
-            existingRows = flatRateData.Tables["Categories"].Select("Title LIKE '" + potentialCategory + "'");
+            existingRows = DataManager.Categories.Select("Title LIKE '" + potentialCategory + "'");
             if(existingRows.Length != 0)
             {
                 e.Cancel = true;
