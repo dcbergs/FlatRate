@@ -101,7 +101,7 @@ namespace FlatRate
                                 UnitPrice = double.Parse(currentRow[priceIndex], System.Globalization.CultureInfo.InvariantCulture),
                             };
                             DataManager dataManager = DataManager.GetInstance();
-                            dataManager.AddNewPart(newPart);
+                            dataManager.AddPart(newPart);
                         }
 
                     }

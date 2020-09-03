@@ -104,19 +104,61 @@ namespace FlatRate.Model
         public List<TaskSummary> GetTaskSummaries()
         {
             return
-                (from task in Data.Tables["Tasks"].AsEnumerable()
+                (from task in Tasks.AsEnumerable()
                  join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
                  on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
-                 select new TaskSummary(
-                     task.Field<String>("ID"),
-                     task.Field<String>("Title"),
-                     task.Field<String>("Description"),
-                     task.GetParentRow("taskCategories").Field<String>("Title"),
-                     task.GetParentRow("taskSubcategories").Field<String>("Title"),
-                     task.Field<float>("Hours"),
-                     Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
-                     Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
-                     )
+                 select new TaskSummary {
+                     Id = task.Field<String>("ID"),
+                     Title = task.Field<String>("Title"),
+                     Description = task.Field<String>("Description"),
+                     CategoryName = task.GetParentRow("taskCategories").Field<String>("Title"),
+                     SubcategoryName = task.GetParentRow("taskSubcategories").Field<String>("Title"),
+                     Hours = task.Field<float>("Hours"),
+                     StandardTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
+                     PremiumTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
+                    }
+                 ).ToList();
+        }
+
+        public List<TaskSummary> GetTaskSummariesByCategoryId(int id)
+        {
+            return
+                (from task in Tasks.AsEnumerable()
+                 where task.Field<Int32>("CategoryId") == id
+                 join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
+                 on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
+                 select new TaskSummary
+                 {
+                     Id = task.Field<String>("ID"),
+                     Title = task.Field<String>("Title"),
+                     Description = task.Field<String>("Description"),
+                     CategoryName = task.GetParentRow("taskCategories").Field<String>("Title"),
+                     SubcategoryName = task.GetParentRow("taskSubcategories").Field<String>("Title"),
+                     Hours = task.Field<float>("Hours"),
+                     StandardTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
+                     PremiumTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
+                 }
+                 ).ToList();
+        }
+
+        public List<TaskSummary> GetTaskSummariesBySubcategoryId(int id)
+        {
+            return
+                (from task in Tasks.AsEnumerable()
+                 where task.Field<Int32>("SubcategoryId") == id
+                 join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
+                 on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
+                 select new TaskSummary
+                 {
+                     Id = task.Field<String>("ID"),
+                     Title = task.Field<String>("Title"),
+                     Description = task.Field<String>("Description"),
+                     CategoryName = task.GetParentRow("taskCategories").Field<String>("Title"),
+                     SubcategoryName = task.GetParentRow("taskSubcategories").Field<String>("Title"),
+                     Hours = task.Field<float>("Hours"),
+                     StandardTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
+                     PremiumTotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
+                 }
                  ).ToList();
         }
 
@@ -139,7 +181,7 @@ namespace FlatRate.Model
             Data.EnforceConstraints = true;
         }
 
-        public void AddNewPart(Part part)
+        public void AddPart(Part part)
         {
             //if it doesn't contain ID already,
             if (Data.Tables["Parts"].Rows.Find(part.Id) == null)
@@ -158,12 +200,50 @@ namespace FlatRate.Model
             }
         }
 
-        public EnumerableRowCollection<DataRow> GetSubcategoriesByCategoryId(int id)
+        public void AddSubcategory(Subcategory subcategory)
         {
-            return
+            DataRow addRow = Subcategories.NewRow();
+            addRow["Title"] = subcategory.Title;
+            addRow["CategoryID"] = subcategory.CategoryId;
+            Subcategories.Rows.Add(addRow);
+        }
+
+        public List<Subcategory> GetSubcategoriesByCategoryId(int id)
+        {
+            List<Subcategory> subcategories = new List<Subcategory>();
+            var subcatQuery =
                 from subcategory in Subcategories.AsEnumerable()
-                where subcategory.Field<Int32>("CategoryID") == id
+                where subcategory.Field<Int32>("ID") == id
                 select subcategory;
+            foreach(DataRow subcat in subcatQuery)
+            {
+                Subcategory newSubcat = new Subcategory
+                {
+                    Id = subcat.Field<Int32>("ID"),
+                    Title = subcat.Field<String>("Title"),
+                    CategoryId = subcat.Field<Int32>("CategoryID"),
+                };
+                subcategories.Add(newSubcat);
+            }
+            return subcategories;
+        }
+
+        public List<Category> GetCategories()
+        {
+            List<Category> categories = new List<Category>();
+            var categoryQuery =
+                from category in Categories.AsEnumerable()
+                select category;
+            foreach(var category in categoryQuery)
+            {
+                Category newCat = new Category
+                {
+                    Id = category.Field<Int32>("ID"),
+                    Title = category.Field<String>("Title"),
+                };
+                categories.Add(newCat);
+            }
+            return categories;
         }
 
         public bool IsTask(String Id)
@@ -263,6 +343,27 @@ namespace FlatRate.Model
             Tasks.AcceptChanges();
         }
 
+        private void DeleteSubcategory(int id)
+        {
+            Subcategories.Rows.Find(id).Delete();
+            Subcategories.AcceptChanges();
+        }
+
+        public void DeleteTasksFromSummaries(List<TaskSummary> tasks) {
+            foreach (TaskSummary task in tasks)
+            {
+                DeleteTask(task.Id);
+            }
+        }
+
+        public void DeleteSubcategories(List<Subcategory> subcategories)
+        {
+            foreach(Subcategory sub in subcategories)
+            {
+                DeleteSubcategory(sub.Id);
+            }
+        }
+
         public DataView GetSubcategoriesViewByCategory(int categoryId)
         {
             EnumerableRowCollection<DataRow> subcategoryQuery =
@@ -271,6 +372,25 @@ namespace FlatRate.Model
                 select subcategory;
 
             return subcategoryQuery.AsDataView();
+        }
+
+        public DataView GetTasksViewBySubcategory(int subcategoryId)
+        {
+            EnumerableRowCollection<DataRow> taskQuery =
+                from task in Tasks.AsEnumerable()
+                where task.Field<Int32>("SubcategoryID") == subcategoryId
+                select task;
+
+            return taskQuery.AsDataView();
+
+        }
+
+        public void DeleteCategoryById(int id)
+        {
+            DeleteTasksFromSummaries(GetTaskSummariesByCategoryId(id));
+            DeleteSubcategories(GetSubcategoriesByCategoryId(id));
+            Categories.Rows.Find(id).Delete();
+            Categories.AcceptChanges();
         }
 
         public List<TaskRow> TemporaryPartsByTask(String taskId)

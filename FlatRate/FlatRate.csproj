@@ -125,10 +125,12 @@
     <Compile Include="Forms\SavePdfForm.Designer.cs">
       <DependentUpon>SavePdfForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\Category.cs" />
     <Compile Include="Model\DataManager.cs" />
     <Compile Include="Model\Part.cs" />
     <Compile Include="Model\PdfAuthorInfo.cs" />
     <Compile Include="Model\Schema.cs" />
+    <Compile Include="Model\Subcategory.cs" />
     <Compile Include="Model\Task.cs" />
     <Compile Include="Model\TaskRow.cs" />
     <Compile Include="IO\ReadInput.cs" />

@@ -13,7 +13,7 @@ namespace FlatRate
 {
     public partial class PrimaryForm : Form
     {
-        DataManager dataManager = DataManager.GetInstance();
+        private DataManager dataManager = DataManager.GetInstance();
         //holds parts in the edit/new task field while the task is not yet saved
         private List<TaskRow> temporaryParts = new List<TaskRow>();
         //formatting and error message variables
@@ -224,9 +224,8 @@ namespace FlatRate
                 if (row != null)
                 {
                     //query for appropriate subcategories
-                    EnumerableRowCollection<DataRow> subcategoryQuery2 = dataManager.GetSubcategoriesByCategoryId(Convert.ToInt32(row["Id"]));
 
-                    DataView view = subcategoryQuery2.AsDataView();
+                    DataView view = dataManager.GetSubcategoriesViewByCategory(Convert.ToInt32(row["Id"]));
                     comboSubcategory.DataSource = view;
                     comboSubcategory.DisplayMember = "Title";
                     comboSubcategory.ValueMember = "ID";
@@ -693,7 +692,7 @@ namespace FlatRate
             {
                 try
                 {
-                    OutputTasksCsv.export(saveTaskCsvDialog.FileName);
+                    OutputTasksCsv.Export(saveTaskCsvDialog.FileName);
                 }
                 catch (IOException)
                 {
@@ -701,7 +700,6 @@ namespace FlatRate
                 }
             }
         }
-
 
         //--------------------------------------------------------------------DOCUMENTATION---------------------------------------------------
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
