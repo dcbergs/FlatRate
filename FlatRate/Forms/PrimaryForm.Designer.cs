@@ -67,6 +67,7 @@
             this.txtBoxSearchParts = new System.Windows.Forms.TextBox();
             this.partsGridView = new System.Windows.Forms.DataGridView();
             this.taskGroupBox = new System.Windows.Forms.GroupBox();
+            this.btnEditSelectedTasks = new System.Windows.Forms.Button();
             this.btnExportToCSV = new System.Windows.Forms.Button();
             this.btnExportToPDF = new System.Windows.Forms.Button();
             this.btnDeleteSelectedTask = new System.Windows.Forms.Button();
@@ -81,11 +82,10 @@
             this.saveDataDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadDataDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveTaskCsvDialog = new System.Windows.Forms.SaveFileDialog();
-            this.toolStripHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.startNewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.jobEditBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -477,6 +477,7 @@
             // 
             // taskGroupBox
             // 
+            this.taskGroupBox.Controls.Add(this.btnEditSelectedTasks);
             this.taskGroupBox.Controls.Add(this.btnExportToCSV);
             this.taskGroupBox.Controls.Add(this.btnExportToPDF);
             this.taskGroupBox.Controls.Add(this.btnDeleteSelectedTask);
@@ -488,9 +489,19 @@
             this.taskGroupBox.TabStop = false;
             this.taskGroupBox.Text = "Task List";
             // 
+            // btnEditSelectedTasks
+            // 
+            this.btnEditSelectedTasks.Location = new System.Drawing.Point(154, 16);
+            this.btnEditSelectedTasks.Name = "btnEditSelectedTasks";
+            this.btnEditSelectedTasks.Size = new System.Drawing.Size(149, 23);
+            this.btnEditSelectedTasks.TabIndex = 6;
+            this.btnEditSelectedTasks.Text = "Group Edit Selected Task(s)";
+            this.btnEditSelectedTasks.UseVisualStyleBackColor = true;
+            this.btnEditSelectedTasks.Click += new System.EventHandler(this.btnEditSelectedTasks_Click);
+            // 
             // btnExportToCSV
             // 
-            this.btnExportToCSV.Location = new System.Drawing.Point(306, 16);
+            this.btnExportToCSV.Location = new System.Drawing.Point(710, 16);
             this.btnExportToCSV.Name = "btnExportToCSV";
             this.btnExportToCSV.Size = new System.Drawing.Size(137, 23);
             this.btnExportToCSV.TabIndex = 5;
@@ -500,7 +511,7 @@
             // 
             // btnExportToPDF
             // 
-            this.btnExportToPDF.Location = new System.Drawing.Point(157, 16);
+            this.btnExportToPDF.Location = new System.Drawing.Point(561, 16);
             this.btnExportToPDF.Name = "btnExportToPDF";
             this.btnExportToPDF.Size = new System.Drawing.Size(143, 23);
             this.btnExportToPDF.TabIndex = 4;
@@ -514,7 +525,7 @@
             this.btnDeleteSelectedTask.Name = "btnDeleteSelectedTask";
             this.btnDeleteSelectedTask.Size = new System.Drawing.Size(141, 23);
             this.btnDeleteSelectedTask.TabIndex = 3;
-            this.btnDeleteSelectedTask.Text = "Delete Selected Task";
+            this.btnDeleteSelectedTask.Text = "Delete Selected Task(s)";
             this.btnDeleteSelectedTask.UseVisualStyleBackColor = true;
             this.btnDeleteSelectedTask.Click += new System.EventHandler(this.btnDeleteSelectedTask_Click);
             // 
@@ -536,8 +547,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolStripEdit,
-            this.toolStripHelp});
+            this.toolStripEdit});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(877, 24);
@@ -547,6 +557,7 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.startNewToolStripMenuItem,
             this.saveAllDataToolStripMenuItem,
             this.loadDataToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -556,14 +567,14 @@
             // saveAllDataToolStripMenuItem
             // 
             this.saveAllDataToolStripMenuItem.Name = "saveAllDataToolStripMenuItem";
-            this.saveAllDataToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.saveAllDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAllDataToolStripMenuItem.Text = "Save Data...";
             this.saveAllDataToolStripMenuItem.Click += new System.EventHandler(this.saveDataToolStripMenuItem_Click);
             // 
             // loadDataToolStripMenuItem
             // 
             this.loadDataToolStripMenuItem.Name = "loadDataToolStripMenuItem";
-            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loadDataToolStripMenuItem.Text = "Load Data...";
             this.loadDataToolStripMenuItem.Click += new System.EventHandler(this.loadDataToolStripMenuItem_Click);
             // 
@@ -579,14 +590,14 @@
             // categoriesToolStripMenuItem
             // 
             this.categoriesToolStripMenuItem.Name = "categoriesToolStripMenuItem";
-            this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.categoriesToolStripMenuItem.Text = "Categories";
             this.categoriesToolStripMenuItem.Click += new System.EventHandler(this.categoriesToolStripMenuItem_Click);
             // 
             // ratesToolStripMenuItem
             // 
             this.ratesToolStripMenuItem.Name = "ratesToolStripMenuItem";
-            this.ratesToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.ratesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ratesToolStripMenuItem.Text = "Rates";
             this.ratesToolStripMenuItem.Click += new System.EventHandler(this.ratesToolStripMenuItem_Click);
             // 
@@ -599,20 +610,12 @@
             // 
             this.saveTaskCsvDialog.Filter = "CSV (*.csv) | *.csv";
             // 
-            // toolStripHelp
+            // startNewToolStripMenuItem
             // 
-            this.toolStripHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
-            this.toolStripHelp.Name = "toolStripHelp";
-            this.toolStripHelp.Size = new System.Drawing.Size(44, 20);
-            this.toolStripHelp.Text = "Help";
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
-            this.aboutToolStripMenuItem.Text = "About...";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.startNewToolStripMenuItem.Name = "startNewToolStripMenuItem";
+            this.startNewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.startNewToolStripMenuItem.Text = "Start New";
+            this.startNewToolStripMenuItem.Click += new System.EventHandler(this.startNewToolStripMenuItem_Click);
             // 
             // PrimaryForm
             // 
@@ -705,8 +708,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button btnExportToCSV;
         private System.Windows.Forms.SaveFileDialog saveTaskCsvDialog;
-        private System.Windows.Forms.ToolStripMenuItem toolStripHelp;
-        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.Button btnEditSelectedTasks;
+        private System.Windows.Forms.ToolStripMenuItem startNewToolStripMenuItem;
     }
 }
 

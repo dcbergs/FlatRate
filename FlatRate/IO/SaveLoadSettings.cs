@@ -1,16 +1,19 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace FlatRate
 {
     class SaveLoadSettings
     {
         private string filename;
+        public string DataFilename { get; private set; }
 
         public SaveLoadSettings()
         {
             filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FlatRate");
             Directory.CreateDirectory(filename);
+            DataFilename = "";
         }
 
         public void saveRates()
@@ -82,6 +85,7 @@ namespace FlatRate
                     {
                         //next line should be file path
                         previousFilePath = settingFile.ReadLine();
+                        DataFilename = previousFilePath.Split('\\').Last();
                     }
                 }
                 settingFile.Close();
@@ -89,5 +93,6 @@ namespace FlatRate
             //if the conditions are not met, returns an empty string
             return previousFilePath;
         }
+
     }
 }

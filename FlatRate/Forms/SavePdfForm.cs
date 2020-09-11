@@ -15,12 +15,10 @@ namespace FlatRate
 {
     public partial class SavePdfForm : Form
     {
-        private readonly DataSet data;
         private ErrorProvider ep = new ErrorProvider();
-        public SavePdfForm(DataSet data)
+        public SavePdfForm()
         {
             InitializeComponent();
-            this.data = data;
         }
 
         private void generatePdfButton_Click(object sender, EventArgs e)
@@ -50,7 +48,7 @@ namespace FlatRate
                 {
                     try
                     {
-                        OutputBook outputBook = new OutputBook(exportPDFDialog.FileName, data, info);
+                        OutputBook outputBook = new OutputBook(exportPDFDialog.FileName, info);
                         outputBook.writeBook();
                     }
                     catch (IOException)

@@ -5,22 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FlatRate.Model;
 using Microsoft.VisualBasic.FileIO;
 
 namespace FlatRate
 {
-    class readInput
+    class ReadInput
     {
         private String filename;
 
         //set filename
-        public readInput(String filename)
+        public ReadInput(String filename)
         {
             this.filename = filename;
         }
 
         //gets the dataset passed in as parameter and adds/updates all the parts by ID to Parts table
-        public void generatePartsList(DataSet data)
+        public void generatePartsList()
         {
             using (TextFieldParser parser = new TextFieldParser(filename))
             {
@@ -76,7 +77,6 @@ namespace FlatRate
                     {
                         currentRow = parser.ReadFields();
 
-                        //TODO if only some are missing, indicate that data is missing
                         //TextFieldParser gives blanks as "" apparently, not null
                         if (currentRow[idIndex] == "")
                         {
@@ -93,22 +93,14 @@ namespace FlatRate
                         }
                         else
                         {
-                            //add error condition for improperly formatted prices?
-                            //if it doesn't contain ID already,
-                            if (data.Tables["Parts"].Rows.Find(currentRow[idIndex]) == null)
+                            Part newPart = new Part
                             {
-                                DataRow newPart = data.Tables["Parts"].NewRow();
-                                newPart["ID"] = currentRow[idIndex];
-                                newPart["Description"] = currentRow[descIndex];
-                                newPart["UnitPrice"] = float.Parse(currentRow[priceIndex], System.Globalization.CultureInfo.InvariantCulture);
-                                data.Tables["Parts"].Rows.Add(newPart);
-                            }
-                            else
-                            {
-                                DataRow row = data.Tables["Parts"].Rows.Find(currentRow[idIndex]);
-                                row["Description"] = currentRow[descIndex];
-                                row["UnitPrice"] = float.Parse(currentRow[priceIndex], System.Globalization.CultureInfo.InvariantCulture);
-                            }
+                                Id = currentRow[idIndex],
+                                Description = currentRow[descIndex],
+                                UnitPrice = double.Parse(currentRow[priceIndex], System.Globalization.CultureInfo.InvariantCulture),
+                            };
+                            DataManager dataManager = DataManager.GetInstance();
+                            dataManager.AddPart(newPart);
                         }
 
                     }

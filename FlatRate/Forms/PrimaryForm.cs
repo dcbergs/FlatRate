@@ -1,4 +1,6 @@
-﻿using FlatRate.IO;
+﻿using FlatRate.Forms;
+using FlatRate.IO;
+using FlatRate.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,8 +14,7 @@ namespace FlatRate
 {
     public partial class PrimaryForm : Form
     {
-        private DataSet flatRateData = new DataSet("FlatRateData");
-
+        private DataManager dataManager = DataManager.GetInstance();
         //holds parts in the edit/new task field while the task is not yet saved
         private List<TaskRow> temporaryParts = new List<TaskRow>();
         //formatting and error message variables
@@ -25,9 +26,6 @@ namespace FlatRate
         public PrimaryForm()
         {
             InitializeComponent();
-
-            //defines flatRateData with Schema class
-            DefineTable();
 
             //auto-load rate data
             try
@@ -42,13 +40,15 @@ namespace FlatRate
             }
             //try to auto-load last data file used
             //if the file isn't found or there is any other problem, it just starts from a blank slate
-            string previousFilePath = saveLoader.loadMostRecent();
+            String title = "FlatRate";
+            String previousFilePath = saveLoader.loadMostRecent();
             if(previousFilePath != "")
             {
                 try
                 {
-                    flatRateData.ReadXml(previousFilePath);
+                    dataManager.ReadXML(previousFilePath);
                     updateTaskListDisplay();
+                    title += " - " + saveLoader.DataFilename;
                 }
                 catch
                 {
@@ -56,6 +56,8 @@ namespace FlatRate
                     //just start without auto-loading
                 }
             }
+            this.Text = title;
+
 
             //set data bindings
             //parts
@@ -72,12 +74,6 @@ namespace FlatRate
             
         }
 
-        private void DefineTable()
-        {
-            Schema schema = new Schema(flatRateData);
-            schema.setupData();
-        }
-
         //----------------------------------------------------------------------LOAD CSV OF PARTS--------------------------------
         private void btnLoadCSV_Click(object sender, EventArgs e)
         {
@@ -88,8 +84,8 @@ namespace FlatRate
                 try
                 {
                     //read csv input and put into partList object
-                    readInput partsInput = new readInput(openPartsListDialog.FileName);
-                    partsInput.generatePartsList(flatRateData);
+                    ReadInput partsInput = new ReadInput(openPartsListDialog.FileName);
+                    partsInput.generatePartsList();
                 }
                 catch (Exception except)
                 {
@@ -214,30 +210,14 @@ namespace FlatRate
 
         private void updateTaskListDisplay()
         {
-            var taskrows =
-                (from task in flatRateData.Tables["Tasks"].AsEnumerable()
-                 join taskpart in flatRateData.Tables["Tasks_Parts"].AsEnumerable()
-                 on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
-                 select new
-                 {
-                     id = task.Field<String>("ID"),
-                     title = task.Field<String>("Title"),
-                     desc = task.Field<String>("Description"),
-                     cat = task.GetParentRow("taskCategories").Field<String>("Title"),
-                     subcat = task.GetParentRow("taskSubcategories").Field<String>("Title"),
-                     hrs = task.Field<float>("Hours"),
-                     stdtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.STANDARD_RATE) + task.Field<float>("StdAddOn")),
-                     premtotal = Math.Ceiling(tp.Sum(x => x.GetParentRow("taskPartsParts").Field<float>("UnitPrice") * x.Field<float>("Quantity")) + (task.Field<float>("Hours") * Program.PREMIUM_RATE) + task.Field<float>("PremAddOn"))
-                 }).ToList();
-
-            taskBindingSource.DataSource = taskrows;
+            taskBindingSource.DataSource = dataManager.GetTaskSummaries();
             tasksGridView.DataSource = taskBindingSource;
         }
 
         private void updateComboBoxes()
         {
             //category combo box
-            comboCategory.DataSource = flatRateData.Tables["Categories"];
+            comboCategory.DataSource = DataManager.Categories;
             comboCategory.DisplayMember = "Title";
             comboCategory.ValueMember = "ID";
 
@@ -249,12 +229,8 @@ namespace FlatRate
                 if (row != null)
                 {
                     //query for appropriate subcategories
-                    EnumerableRowCollection<DataRow> subcategoryQuery2 =
-                        from subcategory in flatRateData.Tables["Subcategories"].AsEnumerable()
-                        where subcategory.Field<Int32>("CategoryID") == Convert.ToInt32(row["ID"])
-                        select subcategory;
 
-                    DataView view = subcategoryQuery2.AsDataView();
+                    DataView view = dataManager.GetSubcategoriesViewByCategory(Convert.ToInt32(row["Id"]));
                     comboSubcategory.DataSource = view;
                     comboSubcategory.DisplayMember = "Title";
                     comboSubcategory.ValueMember = "ID";
@@ -265,7 +241,7 @@ namespace FlatRate
 
         private void updateParts()
         {
-            partBindingSource.DataSource = flatRateData.Tables["Parts"];
+            partBindingSource.DataSource = DataManager.Parts;
             partsGridView.DataSource = partBindingSource;
             partsGridView.Columns[0].HeaderText = "Name";
             partsGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
@@ -364,7 +340,7 @@ namespace FlatRate
         //format subtotal column to only show two decimal places
         private void taskPartsGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            taskPartsGridView.Columns[0].HeaderText = "Part ID";
+            taskPartsGridView.Columns[0].HeaderText = "Part Name";
             taskPartsGridView.Columns[0].ReadOnly = true;
 
             taskPartsGridView.Columns[1].HeaderText = "Description";
@@ -465,8 +441,9 @@ namespace FlatRate
                 string newID = txtBoxTaskID.Text;
 
                 bool overwrite = true; //default to true so task will be saved unless it's a duplicate
-                DataRow row = flatRateData.Tables["Tasks"].Rows.Find(newID);
-                if (row != null)
+                bool taskExists = dataManager.IsTask(newID);
+                DataRow row = DataManager.Tasks.Rows.Find(newID);
+                if (!taskExists)
                 {
                     overwrite = false; //it's a duplicate, so don't overwrite by default
                     string title = "Duplicate Task ID";
@@ -480,126 +457,52 @@ namespace FlatRate
 
                 if (overwrite)
                 {
-                    //if duplicate, edit
-                    if (row != null)
+                    //DTO for task, pass taskparts temporary list to task adder too
+                    Task task = new Task();
+                    task.Id = txtBoxTaskID.Text;
+                    task.Title = txtBoxTaskTitle.Text;
+                    task.Description = txtBoxTaskDescription.Text;
+
+                    task.CategoryId = Convert.ToInt32(((DataRowView)comboCategory.SelectedItem).Row["ID"]);
+                    task.SubcategoryId = Convert.ToInt32(((DataRowView)comboSubcategory.SelectedItem).Row["ID"]);
+                    float testHours = 0.0f;
+                    if (!float.TryParse(txtBoxHoursEntry.Text, out testHours) || testHours < 0)
                     {
-                        row["Title"] = txtBoxTaskTitle.Text;
-                        row["Description"] = txtBoxTaskDescription.Text;
-                        //get category ID from selected category in combo box
-                        row["CategoryID"] = ((DataRowView)comboCategory.SelectedItem).Row["ID"];
-                        //get subcategory ID from selected subcategory in combo box
-                        row["SubcategoryID"] = ((DataRowView)comboSubcategory.SelectedItem).Row["ID"];
-                        //hours
-                        float testHours = 0.0f;
-                        if(!float.TryParse(txtBoxHoursEntry.Text, out testHours) || testHours < 0)
-                        {
-                            //error
-                            Console.WriteLine("Error parsing task hours");
-                        }
-                        else
-                        {
-                            row["Hours"] = testHours;
-                        }
-                        //standard add-on
-                        float testStandard = 0.0f;
-                        if (!float.TryParse(txtBoxStdAdd.Text, out testStandard))
-                        {
-                            //error
-                            Console.WriteLine("Error parsing standard add-on");
-                        }
-                        else
-                        {
-                            row["StdAddOn"] = testStandard;
-                        }
-                        //premium add-on
-                        float testPremium = 0.0f;
-                        if(!float.TryParse(txtBoxPremAdd.Text, out testPremium))
-                        {
-                            //error
-                            Console.WriteLine("error parsing premium add-on");
-                        }
-                        else
-                        {
-                            row["PremAddOn"] = testPremium;
-                        }
-                        //also edit tasks_parts
-                        //remove prior associations with this Task.ID, if any
-                        var toRemove =
-                            from taskpart in flatRateData.Tables["Tasks_Parts"].AsEnumerable()
-                            where taskpart.Field<string>("TaskID") == newID
-                            select taskpart;
-                        foreach(var removeRow in toRemove.ToList())
-                        {
-                            removeRow.Delete();
-                        }
-                        //add new associations with this Task.ID
-                        foreach(TaskRow part in temporaryParts)
-                        {
-                            DataRow newPart = flatRateData.Tables["Tasks_Parts"].NewRow();
-                            newPart["TaskID"] = newID;
-                            newPart["PartID"] = part.id;
-                            newPart["Quantity"] = part.quantity;
-                            flatRateData.Tables["Tasks_Parts"].Rows.Add(newPart);
-                        }
+                        //error
+                        Console.WriteLine("Error parsing task hours");
+                        task.Hours = 0.0f;
                     }
-                    //else add new row to Tasks
                     else
                     {
-                        //Tasks row
-                        DataRow newRow = flatRateData.Tables["Tasks"].NewRow();
-                        newRow["ID"] = txtBoxTaskID.Text;
-                        newRow["Title"] = txtBoxTaskTitle.Text;
-                        newRow["Description"] = txtBoxTaskDescription.Text;
-                        //get category ID from selected category in combo box
-                        newRow["CategoryID"] = ((DataRowView)comboCategory.SelectedItem).Row["ID"];
-                        //get subcategory ID from selected subcategory in combo box
-                        newRow["SubcategoryID"] = ((DataRowView)comboSubcategory.SelectedItem).Row["ID"];
-                        //hours
-                        float testHours = 0.0f;
-                        if (!float.TryParse(txtBoxHoursEntry.Text, out testHours) || testHours < 0)
-                        {
-                            //error
-                            Console.WriteLine("Error parsing task hours");
-                        }
-                        else
-                        {
-                            newRow["Hours"] = testHours;
-                        }
-                        //standard add-on
-                        float testStandard = 0.0f;
-                        if (!float.TryParse(txtBoxStdAdd.Text, out testStandard))
-                        {
-                            //error
-                            Console.WriteLine("Error parsing standard add-on");
-                        }
-                        else
-                        {
-                            newRow["StdAddOn"] = testStandard;
-                        }
-                        //premium add-on
-                        float testPremium = 0.0f;
-                        if (!float.TryParse(txtBoxPremAdd.Text, out testPremium))
-                        {
-                            //error
-                            Console.WriteLine("error parsing premium add-on");
-                        }
-                        else
-                        {
-                            newRow["PremAddOn"] = testPremium;
-                        }
-                        flatRateData.Tables["Tasks"].Rows.Add(newRow);
-
-                        //Tasks_Parts rows
-                        foreach (TaskRow part in temporaryParts)
-                        {
-                            DataRow newPart = flatRateData.Tables["Tasks_Parts"].NewRow();
-                            newPart["TaskID"] = newID;
-                            newPart["PartID"] = part.id;
-                            newPart["Quantity"] = part.quantity;
-                            flatRateData.Tables["Tasks_Parts"].Rows.Add(newPart);
-                        }
-
+                        task.Hours = testHours;
                     }
+                    //standard add-on
+                    float testStandard = 0.0f;
+                    if (!float.TryParse(txtBoxStdAdd.Text, out testStandard))
+                    {
+                        //error
+                        Console.WriteLine("Error parsing standard add-on");
+                        task.StandardAddOn = 0.0f;
+                    }
+                    else
+                    {
+                        task.StandardAddOn = testStandard;
+                    }
+                    //premium add-on
+                    float testPremium = 0.0f;
+                    if (!float.TryParse(txtBoxPremAdd.Text, out testPremium))
+                    {
+                        //error
+                        Console.WriteLine("error parsing premium add-on");
+                        task.PremiumAddOn = 0.0f;
+                    }
+                    else
+                    {
+                        task.PremiumAddOn = testPremium;
+                    }
+
+                    dataManager.AddOrUpdateTask(task, temporaryParts);
+
 
                     //update UI
                     updateTaskListDisplay();
@@ -623,50 +526,35 @@ namespace FlatRate
         //-------------------------------------------------------------------EDIT TASK---------------------------------------------------------
         private void tasksGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            //greater than 0: 0th row is header, not a task
             if(e.RowIndex >= 0)
             {
                 //fill text boxes based on task ID from data table
                 string tempID = ((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value.ToString();
-                //task info which can be found tirectly in Tasks table
+                Task editingTask;
+                try
+                {
+                    editingTask = dataManager.GetTaskById(tempID);
+                }
+                catch(ArgumentException)
+                {
+                    editingTask = new Task();
+                }
                 txtBoxTaskID.Text = tempID;
-                txtBoxTaskTitle.Text = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<String>("Title");
-                txtBoxTaskDescription.Text = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<String>("Description");
+                txtBoxTaskTitle.Text = editingTask.Title;
+                txtBoxTaskDescription.Text = editingTask.Description;
                 //combo box selection
-                comboCategory.SelectedValue = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<Int32>("CategoryID");
-                //query for appropriate subcategories
-                EnumerableRowCollection<DataRow> subcategoryQuery =
-                    from subcategory in flatRateData.Tables["Subcategories"].AsEnumerable()
-                    where subcategory.Field<Int32>("CategoryID") == flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<Int32>("CategoryID")
-                    select subcategory;
-
-                DataView view = subcategoryQuery.AsDataView();
-                comboSubcategory.DataSource = view;
+                comboCategory.SelectedValue = editingTask.CategoryId;
+                //get appropriate subcategories
+                comboSubcategory.DataSource = dataManager.GetSubcategoriesViewByCategory(editingTask.CategoryId);
                 comboSubcategory.DisplayMember = "Title";
                 comboSubcategory.ValueMember = "ID";
-                comboSubcategory.SelectedValue = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<Int32>("SubcategoryID");
-                txtBoxHoursEntry.Text = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<float>("Hours").ToString();
-                txtBoxStdAdd.Text = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<float>("StdAddOn").ToString();
-                txtBoxPremAdd.Text = flatRateData.Tables["Tasks"].Rows.Find(tempID).Field<float>("PremAddOn").ToString();
-                //task parts which need to be found in Tasks_Parts
-                //clear temporary parts first
-                temporaryParts.Clear();
-                //select all rows from tasks_parts belonging to taskID
-                var taskpartsquery =
-                    from taskparts in flatRateData.Tables["Tasks_Parts"].AsEnumerable()
-                    where taskparts.Field<String>("TaskID") == tempID
-                    select taskparts;
-
-                //for each row, extract data and make a new TaskRow object
-                foreach (DataRow taskpart in taskpartsquery)
-                {
-                    string newid = taskpart.Field<String>("PartID");
-                    string newDescription = taskpart.GetParentRow("taskPartsParts").Field<String>("Description");
-                    float newCost = taskpart.GetParentRow("taskPartsParts").Field<float>("UnitPrice");
-                    float newQuantity = taskpart.Field<float>("Quantity");
-                    TaskRow newPart = new TaskRow(newid, newDescription, newCost, newQuantity);
-
-                    temporaryParts.Add(newPart);
-                }
+                comboSubcategory.SelectedValue = editingTask.SubcategoryId;
+                txtBoxHoursEntry.Text = editingTask.Hours.ToString();
+                txtBoxStdAdd.Text = editingTask.StandardAddOn.ToString();
+                txtBoxPremAdd.Text = editingTask.PremiumAddOn.ToString();
+                //refresh temporary parts
+                temporaryParts = dataManager.TemporaryPartsByTask(tempID);
                 taskRowBindingSource.DataSource = null;
                 taskRowBindingSource.DataSource = temporaryParts;
                 updateTempCosts();
@@ -695,32 +583,46 @@ namespace FlatRate
             {
                 string tempID = tasksGridView.Rows[index].Cells[0].Value.ToString();
 
-                //query Tasks_Parts for removal
-                EnumerableRowCollection<DataRow> taskspartsquery =
-                    from removalRow in flatRateData.Tables["Tasks_Parts"].AsEnumerable()
-                    where removalRow.Field<String>("TaskID") == tempID
-                    select removalRow;
-                flatRateData.Tables["Tasks_Parts"].AcceptChanges();
-                foreach (DataRow taskspartsrow in taskspartsquery)
-                {
-                    taskspartsrow.Delete();
-                }
-                flatRateData.Tables["Tasks_Parts"].AcceptChanges();
-
-                //remove the task itself
-                flatRateData.Tables["Tasks"].Rows.Find(tempID).Delete();
-                flatRateData.Tables["Tasks"].AcceptChanges();
+                dataManager.DeleteTask(tempID);
 
                 //update binding source
                 updateTaskListDisplay();
             }
+        }
+        private void btnEditSelectedTasks_Click(object sender, EventArgs e)
+        {
+            //get row info from cells
+            HashSet<int> rows = new HashSet<int>();
+            foreach (DataGridViewCell cell in tasksGridView.SelectedCells)
+            {
+                rows.Add(cell.RowIndex);
+            }
+            if(rows.Count <= 1)
+            {
+                MessageBox.Show("Please select two or more tasks for group edit.", "Edit Selected Tasks", MessageBoxButtons.OK);
+            }
+            else
+            {
+                //get task ids from rows
+                List<String> tasksToEdit = new List<String>();
+                foreach (int index in rows)
+                {
+                    string tempID = tasksGridView.Rows[index].Cells[0].Value.ToString();
+                    tasksToEdit.Add(tempID);
+                }
+                //open multi-edit form
+                MultiEdit multiEditForm = new MultiEdit(tasksToEdit);
+                multiEditForm.ShowDialog();
+            }
+            updateTaskListDisplay();
+
         }
 
         //----------------------------------------------------------------------MENU STRIP-----------------------------------------------------
         //let user view and edit categories/subcategories for tasks
         private void categoriesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CategoriesForm categoriesForm = new CategoriesForm(flatRateData);
+            CategoriesForm categoriesForm = new CategoriesForm();
             categoriesForm.ShowDialog();
             updateTaskListDisplay();
         }
@@ -729,15 +631,18 @@ namespace FlatRate
         {
             if (saveDataDialog.ShowDialog() == DialogResult.OK && saveDataDialog.FileName != "")
             {
+                String title = "FlatRate";
                 try
                 {
-                    flatRateData.WriteXml(saveDataDialog.FileName);
+                    dataManager.WriteXML(saveDataDialog.FileName);
+                    title += " - " + saveDataDialog.FileName.Split('\\').Last();
                 }
                 catch (IOException err)
                 {
                     Console.WriteLine(err.Message);
                     MessageBox.Show("This file is already open or corrupted. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
                 }
+                this.Text = title;
                 try
                 {
                     //also save filepath as most recent
@@ -761,19 +666,17 @@ namespace FlatRate
             if (loadDataDialog.ShowDialog() == DialogResult.OK &&
                 loadDataDialog.FileName != "")
             {
+                String title = "FlatRate";
                 try
                 {
-                    flatRateData.EnforceConstraints = false;
-                    flatRateData = new DataSet();
-                    DefineTable();
-                    flatRateData.ReadXml(loadDataDialog.FileName);
-                    flatRateData.EnforceConstraints = true;
-
+                    dataManager.LoadXML(loadDataDialog.FileName);
+                    title += " - " + loadDataDialog.FileName.Split('\\').Last();
                 }
                 catch (Exception except)
                 {
                     MessageBox.Show(except.Message, "Error Reading File!", MessageBoxButtons.OK);
                 }
+                this.Text = title;
                 updateTaskListDisplay();
                 updateComboBoxes();
                 updateParts();
@@ -782,25 +685,22 @@ namespace FlatRate
             }
         }
 
+        private void startNewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataManager.ClearAllData();
+            this.Text = "FlatRate";
+            updateTaskListDisplay();
+            updateComboBoxes();
+            updateParts();
+            emptyTempTaskFields();
+            updateTempCosts();
+
+        }
+
         //updates the subcategory combo box whenever a new category is selected
         private void comboCategory_SelectionChangeCommitted(object sender, EventArgs e)
         {
             updateComboBoxes();
-            /*
-            //get the category selected
-            DataRow row = ((DataRowView)comboCategory.SelectedItem).Row;
-            Console.WriteLine("ran the combo changed query");
-            //query for appropriate subcategories
-            EnumerableRowCollection<DataRow> query =
-                from subcategory in flatRateData.Tables["Subcategories"].AsEnumerable()
-                where subcategory.Field<Int32>("CategoryID") == Convert.ToInt32(row["ID"])
-                select subcategory;
-
-            DataView view = query.AsDataView();
-            comboSubcategory.DataSource = view;
-            comboSubcategory.DisplayMember = "Title";
-            comboSubcategory.ValueMember = "ID";
-            */
         }
 
         private void ratesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -817,8 +717,7 @@ namespace FlatRate
             if(e.KeyCode == Keys.Enter)
             {
                 string searchTerm = txtBoxSearchParts.Text;
-                flatRateData.Tables["Parts"].DefaultView.RowFilter = "ID LIKE '%" + searchTerm + "%'";
-                flatRateData.Tables["Parts"].DefaultView.RowFilter += "OR Description LIKE '%" + searchTerm + "%'";
+                dataManager.FilterParts(searchTerm);
 
             }
         }
@@ -826,15 +725,14 @@ namespace FlatRate
         private void txtBoxSearchParts_TextChanged(object sender, EventArgs e)
         {
             string searchTerm = txtBoxSearchParts.Text;
-            flatRateData.Tables["Parts"].DefaultView.RowFilter = "ID LIKE '%" + searchTerm + "%'";
-            flatRateData.Tables["Parts"].DefaultView.RowFilter += "OR Description LIKE '%" + searchTerm + "%'";
+            dataManager.FilterParts(searchTerm);
         }
 
         //----------------------------------------------------------------------EXPORT TO PDF/CSV---------------------------------------------
         private void btnExportToPDF_Click(object sender, EventArgs e)
         {
             //first a form to get info on title, author, also dialog prompt for image source
-            SavePdfForm savePdfForm = new SavePdfForm(flatRateData);
+            SavePdfForm savePdfForm = new SavePdfForm();
             savePdfForm.ShowDialog();
 
         }
@@ -845,7 +743,7 @@ namespace FlatRate
             {
                 try
                 {
-                    OutputTasksCsv.export(flatRateData, saveTaskCsvDialog.FileName);
+                    OutputTasksCsv.Export(saveTaskCsvDialog.FileName);
                 }
                 catch (IOException)
                 {
@@ -854,11 +752,5 @@ namespace FlatRate
             }
         }
 
-
-        //--------------------------------------------------------------------DOCUMENTATION---------------------------------------------------
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }
