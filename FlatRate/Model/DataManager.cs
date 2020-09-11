@@ -21,6 +21,7 @@ namespace FlatRate.Model
 
         private DataManager()
         {
+            Data = new DataSet();
             setupTables();
         }
 
@@ -251,6 +252,66 @@ namespace FlatRate.Model
             return Tasks.Rows.Contains(Id);
         }
 
+        public void UpdateTaskWithoutParts(String id, MultiTaskEditDescriptor changes)
+        {
+            if (IsTask(id))
+            {
+                DataRow row = Tasks.Rows.Find(id);
+                if (changes.IsCategoryChanging)
+                {
+                    row["CategoryID"] = changes.CategoryId;
+                    row["SubcategoryID"] = changes.SubcategoryId;
+                }
+                if (changes.IsHoursChanging)
+                {
+                    if (changes.IsHoursAdditive)
+                    {
+                        if(row.Field<float>("Hours") + changes.Hours < 0)
+                        {
+                            row["Hours"] = 0.0f;
+                        }
+                        else
+                        {
+                            row["Hours"] = row.Field<float>("Hours") + changes.Hours;
+                        }
+                    }
+                    else
+                    {
+                        if(changes.Hours < 0)
+                        {
+                            row["Hours"] = 0.0f;
+                        }
+                        else
+                        {
+                            row["Hours"] = changes.Hours;
+                        }
+                    }
+                }
+                if (changes.IsStandardChanging)
+                {
+                    if (changes.IsStandardAdditive)
+                    {
+                        row["StdAddOn"] = row.Field<float>("StdAddOn") + changes.StandardAddOn;
+                    }
+                    else
+                    {
+                        row["StdAddOn"] = changes.StandardAddOn;
+                    }
+                }
+                if (changes.IsPremiumChanging)
+                {
+                    if (changes.IsPremiumAdditive)
+                    {
+                         row["PremAddOn"] = row.Field<float>("PremAddOn") + changes.PremiumAddOn;
+                    }
+                    else
+                    {
+                        row["PremAddOn"] = changes.PremiumAddOn;
+                    }
+                }
+            }
+        }
+
         public void AddOrUpdateTask(Task task, List<TaskRow> parts)
         {
             DataRow row;
@@ -343,8 +404,9 @@ namespace FlatRate.Model
             Tasks.AcceptChanges();
         }
 
-        private void DeleteSubcategory(int id)
+        public void DeleteSubcategory(int id)
         {
+            DeleteTasksFromSummaries(GetTaskSummariesBySubcategoryId(id));
             Subcategories.Rows.Find(id).Delete();
             Subcategories.AcceptChanges();
         }
@@ -374,20 +436,8 @@ namespace FlatRate.Model
             return subcategoryQuery.AsDataView();
         }
 
-        public DataView GetTasksViewBySubcategory(int subcategoryId)
-        {
-            EnumerableRowCollection<DataRow> taskQuery =
-                from task in Tasks.AsEnumerable()
-                where task.Field<Int32>("SubcategoryID") == subcategoryId
-                select task;
-
-            return taskQuery.AsDataView();
-
-        }
-
         public void DeleteCategoryById(int id)
         {
-            DeleteTasksFromSummaries(GetTaskSummariesByCategoryId(id));
             DeleteSubcategories(GetSubcategoriesByCategoryId(id));
             Categories.Rows.Find(id).Delete();
             Categories.AcceptChanges();
@@ -428,6 +478,12 @@ namespace FlatRate.Model
             DataRow row = Categories.NewRow();
             row["Title"] = categoryName;
             Categories.Rows.Add(row);
+        }
+
+        public void ClearAllData()
+        {
+            Data = new DataSet();
+            setupTables();
         }
     }
 }

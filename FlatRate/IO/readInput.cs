@@ -77,7 +77,6 @@ namespace FlatRate
                     {
                         currentRow = parser.ReadFields();
 
-                        //TODO if only some are missing, indicate that data is missing
                         //TextFieldParser gives blanks as "" apparently, not null
                         if (currentRow[idIndex] == "")
                         {

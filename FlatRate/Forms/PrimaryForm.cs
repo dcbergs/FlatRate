@@ -1,4 +1,5 @@
-﻿using FlatRate.IO;
+﻿using FlatRate.Forms;
+using FlatRate.IO;
 using FlatRate.Model;
 using System;
 using System.Collections.Generic;
@@ -39,13 +40,15 @@ namespace FlatRate
             }
             //try to auto-load last data file used
             //if the file isn't found or there is any other problem, it just starts from a blank slate
-            string previousFilePath = saveLoader.loadMostRecent();
+            String title = "FlatRate";
+            String previousFilePath = saveLoader.loadMostRecent();
             if(previousFilePath != "")
             {
                 try
                 {
                     dataManager.ReadXML(previousFilePath);
                     updateTaskListDisplay();
+                    title += " - " + saveLoader.DataFilename;
                 }
                 catch
                 {
@@ -53,6 +56,8 @@ namespace FlatRate
                     //just start without auto-loading
                 }
             }
+            this.Text = title;
+
 
             //set data bindings
             //parts
@@ -335,7 +340,7 @@ namespace FlatRate
         //format subtotal column to only show two decimal places
         private void taskPartsGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            taskPartsGridView.Columns[0].HeaderText = "Part ID";
+            taskPartsGridView.Columns[0].HeaderText = "Part Name";
             taskPartsGridView.Columns[0].ReadOnly = true;
 
             taskPartsGridView.Columns[1].HeaderText = "Description";
@@ -584,6 +589,34 @@ namespace FlatRate
                 updateTaskListDisplay();
             }
         }
+        private void btnEditSelectedTasks_Click(object sender, EventArgs e)
+        {
+            //get row info from cells
+            HashSet<int> rows = new HashSet<int>();
+            foreach (DataGridViewCell cell in tasksGridView.SelectedCells)
+            {
+                rows.Add(cell.RowIndex);
+            }
+            if(rows.Count <= 1)
+            {
+                MessageBox.Show("Please select two or more tasks for group edit.", "Edit Selected Tasks", MessageBoxButtons.OK);
+            }
+            else
+            {
+                //get task ids from rows
+                List<String> tasksToEdit = new List<String>();
+                foreach (int index in rows)
+                {
+                    string tempID = tasksGridView.Rows[index].Cells[0].Value.ToString();
+                    tasksToEdit.Add(tempID);
+                }
+                //open multi-edit form
+                MultiEdit multiEditForm = new MultiEdit(tasksToEdit);
+                multiEditForm.ShowDialog();
+            }
+            updateTaskListDisplay();
+
+        }
 
         //----------------------------------------------------------------------MENU STRIP-----------------------------------------------------
         //let user view and edit categories/subcategories for tasks
@@ -598,15 +631,18 @@ namespace FlatRate
         {
             if (saveDataDialog.ShowDialog() == DialogResult.OK && saveDataDialog.FileName != "")
             {
+                String title = "FlatRate";
                 try
                 {
                     dataManager.WriteXML(saveDataDialog.FileName);
+                    title += " - " + saveDataDialog.FileName.Split('\\').Last();
                 }
                 catch (IOException err)
                 {
                     Console.WriteLine(err.Message);
                     MessageBox.Show("This file is already open or corrupted. Please close the file and try again.", "Error in file access", MessageBoxButtons.OK);
                 }
+                this.Text = title;
                 try
                 {
                     //also save filepath as most recent
@@ -630,20 +666,35 @@ namespace FlatRate
             if (loadDataDialog.ShowDialog() == DialogResult.OK &&
                 loadDataDialog.FileName != "")
             {
+                String title = "FlatRate";
                 try
                 {
                     dataManager.LoadXML(loadDataDialog.FileName);
+                    title += " - " + loadDataDialog.FileName.Split('\\').Last();
                 }
                 catch (Exception except)
                 {
                     MessageBox.Show(except.Message, "Error Reading File!", MessageBoxButtons.OK);
                 }
+                this.Text = title;
                 updateTaskListDisplay();
                 updateComboBoxes();
                 updateParts();
                 emptyTempTaskFields();
                 updateTempCosts();
             }
+        }
+
+        private void startNewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dataManager.ClearAllData();
+            this.Text = "FlatRate";
+            updateTaskListDisplay();
+            updateComboBoxes();
+            updateParts();
+            emptyTempTaskFields();
+            updateTempCosts();
+
         }
 
         //updates the subcategory combo box whenever a new category is selected
@@ -701,10 +752,5 @@ namespace FlatRate
             }
         }
 
-        //--------------------------------------------------------------------DOCUMENTATION---------------------------------------------------
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

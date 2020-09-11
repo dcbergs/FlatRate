@@ -46,6 +46,7 @@
             this.lblAddSubcategory = new System.Windows.Forms.Label();
             this.txtSubcategory = new System.Windows.Forms.TextBox();
             this.tasksBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.btnDeleteSubcategory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.categoryGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.subcategoryGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tasksGridView)).BeginInit();
@@ -92,11 +93,12 @@
             this.tasksGridView.ReadOnly = true;
             this.tasksGridView.Size = new System.Drawing.Size(304, 409);
             this.tasksGridView.TabIndex = 2;
+            this.tasksGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.tasksGridView_CellFormatting);
             // 
             // lblCategories
             // 
             this.lblCategories.AutoSize = true;
-            this.lblCategories.Location = new System.Drawing.Point(58, 18);
+            this.lblCategories.Location = new System.Drawing.Point(13, 18);
             this.lblCategories.Name = "lblCategories";
             this.lblCategories.Size = new System.Drawing.Size(57, 13);
             this.lblCategories.TabIndex = 3;
@@ -105,7 +107,7 @@
             // lblSubcategories
             // 
             this.lblSubcategories.AutoSize = true;
-            this.lblSubcategories.Location = new System.Drawing.Point(301, 9);
+            this.lblSubcategories.Location = new System.Drawing.Point(304, 18);
             this.lblSubcategories.Name = "lblSubcategories";
             this.lblSubcategories.Size = new System.Drawing.Size(75, 13);
             this.lblSubcategories.TabIndex = 4;
@@ -132,7 +134,7 @@
             // 
             // btnDeleteCategory
             // 
-            this.btnDeleteCategory.Location = new System.Drawing.Point(157, 13);
+            this.btnDeleteCategory.Location = new System.Drawing.Point(170, 13);
             this.btnDeleteCategory.Name = "btnDeleteCategory";
             this.btnDeleteCategory.Size = new System.Drawing.Size(95, 23);
             this.btnDeleteCategory.TabIndex = 7;
@@ -142,7 +144,7 @@
             // 
             // btnAddSubcategory
             // 
-            this.btnAddSubcategory.Location = new System.Drawing.Point(509, 40);
+            this.btnAddSubcategory.Location = new System.Drawing.Point(509, 43);
             this.btnAddSubcategory.Name = "btnAddSubcategory";
             this.btnAddSubcategory.Size = new System.Drawing.Size(51, 23);
             this.btnAddSubcategory.TabIndex = 9;
@@ -170,7 +172,7 @@
             // lblAddSubcategory
             // 
             this.lblAddSubcategory.AutoSize = true;
-            this.lblAddSubcategory.Location = new System.Drawing.Point(304, 45);
+            this.lblAddSubcategory.Location = new System.Drawing.Point(304, 47);
             this.lblAddSubcategory.Name = "lblAddSubcategory";
             this.lblAddSubcategory.Size = new System.Drawing.Size(92, 13);
             this.lblAddSubcategory.TabIndex = 12;
@@ -178,17 +180,28 @@
             // 
             // txtSubcategory
             // 
-            this.txtSubcategory.Location = new System.Drawing.Point(402, 42);
+            this.txtSubcategory.Location = new System.Drawing.Point(402, 45);
             this.txtSubcategory.Name = "txtSubcategory";
             this.txtSubcategory.Size = new System.Drawing.Size(100, 20);
             this.txtSubcategory.TabIndex = 13;
             this.txtSubcategory.Validating += new System.ComponentModel.CancelEventHandler(this.txtSubcategory_Validating);
+            // 
+            // btnDeleteSubcategory
+            // 
+            this.btnDeleteSubcategory.Location = new System.Drawing.Point(458, 13);
+            this.btnDeleteSubcategory.Name = "btnDeleteSubcategory";
+            this.btnDeleteSubcategory.Size = new System.Drawing.Size(102, 23);
+            this.btnDeleteSubcategory.TabIndex = 14;
+            this.btnDeleteSubcategory.Text = "Delete Selected";
+            this.btnDeleteSubcategory.UseVisualStyleBackColor = true;
+            this.btnDeleteSubcategory.Click += new System.EventHandler(this.btnDeleteSubcategory_Click);
             // 
             // CategoriesForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(915, 457);
+            this.Controls.Add(this.btnDeleteSubcategory);
             this.Controls.Add(this.txtSubcategory);
             this.Controls.Add(this.lblAddSubcategory);
             this.Controls.Add(this.txtCategory);
@@ -234,5 +247,6 @@
         private System.Windows.Forms.Label lblAddSubcategory;
         private System.Windows.Forms.TextBox txtSubcategory;
         private System.Windows.Forms.BindingSource tasksBindingSource;
+        private System.Windows.Forms.Button btnDeleteSubcategory;
     }
 }

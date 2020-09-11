@@ -22,7 +22,7 @@ namespace FlatRate
         {
             InitializeComponent();
 
-            //define categoryGridView TODO format columns
+            //define categoryGridView
             categoriesBindingSource.DataSource = DataManager.Categories;
             categoryGridView.DataSource = categoriesBindingSource;
             categoryGridView.Columns[0].Visible = false;
@@ -93,7 +93,39 @@ namespace FlatRate
                 {
                     dataManager.DeleteCategoryById(categoryId);
                 }
-                
+            }
+        }
+
+        private void btnDeleteSubcategory_Click(object sender, EventArgs e)
+        {
+            //this supports multiple selection but for now the datagridview is only allowing one at a time
+            HashSet<int> rows = new HashSet<int>();
+            foreach (DataGridViewCell cell in subcategoryGridView.SelectedCells)
+            {
+                rows.Add(cell.RowIndex);
+            }
+            foreach (int index in rows)
+            {
+                //check for subcategories
+                int subcategoryId = (int)subcategoryGridView.Rows[index].Cells[0].Value;
+
+                List<TaskSummary> tasks = dataManager.GetTaskSummariesBySubcategoryId(subcategoryId);
+
+                bool doDelete = true;
+                if (tasks.Count() > 0)
+                {
+                    string title = "Warning: Subcategory Deletion";
+                    string message = "Deleting this subcategory will delete " + tasks.Count() + " tasks! Delete subcategory anyway?";
+                    var result = MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.No)
+                    {
+                        doDelete = false;
+                    }
+                }
+                if (doDelete)
+                {
+                    dataManager.DeleteSubcategory(subcategoryId);
+                }
             }
         }
 
@@ -204,16 +236,21 @@ namespace FlatRate
                 int subcategoryIDclicked = (int)((DataGridView)sender).Rows[e.RowIndex].Cells[0].Value;
 
                 //update tasks and format
-                DataView view = dataManager.GetTasksViewBySubcategory(subcategoryIDclicked);
-                tasksBindingSource.DataSource = view;
+                tasksBindingSource.DataSource = dataManager.GetTaskSummariesBySubcategoryId(subcategoryIDclicked);
+                tasksGridView.DataSource = tasksBindingSource;
                 tasksGridView.Columns[2].Visible = false;
                 tasksGridView.Columns[3].Visible = false;
                 tasksGridView.Columns[4].Visible = false;
-                tasksGridView.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                tasksGridView.Columns[0].Width = 80;
-                tasksGridView.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-                tasksGridView.Columns[5].Width = 40;
             }
         }
+
+        private void tasksGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.ColumnIndex == 5 || e.ColumnIndex == 6 || e.ColumnIndex == 7)
+            {
+                e.CellStyle.Format = "N2";
+            }
+        }
+
     }
 }

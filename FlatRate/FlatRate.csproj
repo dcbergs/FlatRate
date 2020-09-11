@@ -98,17 +98,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forms\AboutForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AboutForm.Designer.cs">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\CategoriesForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CategoriesForm.Designer.cs">
       <DependentUpon>CategoriesForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MultiEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MultiEdit.Designer.cs">
+      <DependentUpon>MultiEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="IO\OutputBook.cs" />
     <Compile Include="Forms\RatesForm.cs">
@@ -127,6 +127,7 @@
     </Compile>
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\DataManager.cs" />
+    <Compile Include="Model\MultiTaskEditDescriptor.cs" />
     <Compile Include="Model\Part.cs" />
     <Compile Include="Model\PdfAuthorInfo.cs" />
     <Compile Include="Model\Schema.cs" />
@@ -143,11 +144,11 @@
     <Compile Include="Model\TaskSummary.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\AboutForm.resx">
-      <DependentUpon>AboutForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CategoriesForm.resx">
       <DependentUpon>CategoriesForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MultiEdit.resx">
+      <DependentUpon>MultiEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PrimaryForm.resx">
       <DependentUpon>PrimaryForm.cs</DependentUpon>
