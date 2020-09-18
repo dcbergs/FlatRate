@@ -34,7 +34,6 @@ namespace FlatRate.Model
         {
             //define Tasks table
             DataTable tasks = Data.Tables.Add("Tasks");
-
             DataColumn pkTaskID = tasks.Columns.Add("ID", typeof(string));
             tasks.Columns.Add("Title", typeof(string));
             tasks.Columns.Add("Description", typeof(string));
@@ -99,14 +98,13 @@ namespace FlatRate.Model
                 Data.Tables["Parts"].Columns["ID"],
                 Data.Tables["Tasks_Parts"].Columns["PartID"]);
 
-
         }
 
         public List<TaskSummary> GetTaskSummaries()
         {
             return
                 (from task in Tasks.AsEnumerable()
-                 join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
+                 join taskpart in Tasks_Parts.AsEnumerable()
                  on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
                  select new TaskSummary {
                      Id = task.Field<String>("ID"),
@@ -126,7 +124,7 @@ namespace FlatRate.Model
             return
                 (from task in Tasks.AsEnumerable()
                  where task.Field<Int32>("CategoryId") == id
-                 join taskpart in Data.Tables["Tasks_Parts"].AsEnumerable()
+                 join taskpart in Tasks_Parts.AsEnumerable()
                  on task.Field<String>("ID") equals taskpart.Field<String>("TaskID") into tp
                  select new TaskSummary
                  {
@@ -214,7 +212,7 @@ namespace FlatRate.Model
             List<Subcategory> subcategories = new List<Subcategory>();
             var subcatQuery =
                 from subcategory in Subcategories.AsEnumerable()
-                where subcategory.Field<Int32>("ID") == id
+                where subcategory.Field<Int32>("CategoryID") == id
                 select subcategory;
             foreach(DataRow subcat in subcatQuery)
             {
@@ -360,6 +358,8 @@ namespace FlatRate.Model
                 newPart["Quantity"] = part.quantity;
                 Tasks_Parts.Rows.Add(newPart);
             }
+            Tasks.AcceptChanges();
+            Tasks_Parts.AcceptChanges();
         }
 
         public Task GetTaskById(String id)
@@ -383,6 +383,23 @@ namespace FlatRate.Model
             return editTask;
         }
 
+        public List<String> GetTaskIDsUsingThisPart(String partId)
+        {
+            List<String> tasks = new List<String>();
+            var query =
+                from taskparts in Tasks_Parts.AsEnumerable()
+                where taskparts.Field<String>("PartID") == partId
+                select new
+                {
+                    id = taskparts.Field<String>("TaskID")
+                };
+            foreach(var task in query)
+            {
+                tasks.Add(task.id);
+            }
+            return tasks;
+        }
+
         public void DeleteTask(String id)
         {
             //query Tasks_Parts for removal
@@ -402,6 +419,7 @@ namespace FlatRate.Model
             //remove the task itself
             Tasks.Rows.Find(id).Delete();
             Tasks.AcceptChanges();
+            Data.AcceptChanges();
         }
 
         public void DeleteSubcategory(int id)
@@ -478,6 +496,27 @@ namespace FlatRate.Model
             DataRow row = Categories.NewRow();
             row["Title"] = categoryName;
             Categories.Rows.Add(row);
+        }
+
+        public void DeletePartById(String partId)
+        {
+            //query Tasks_Parts for removal
+            EnumerableRowCollection<DataRow> taskspartsquery =
+                from removalRow in Tasks_Parts.AsEnumerable()
+                where removalRow.Field<String>("PartID") == partId
+                select removalRow;
+
+            Tasks_Parts.AcceptChanges();
+
+            foreach (DataRow taskspartsrow in taskspartsquery)
+            {
+                taskspartsrow.Delete();
+            }
+            Tasks_Parts.AcceptChanges();
+
+            //remove the part itself
+            Parts.Rows.Find(partId).Delete();
+            Parts.AcceptChanges();
         }
 
         public void ClearAllData()

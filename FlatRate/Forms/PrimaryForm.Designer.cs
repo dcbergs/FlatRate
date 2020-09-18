@@ -74,6 +74,7 @@
             this.tasksGridView = new System.Windows.Forms.DataGridView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startNewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripEdit = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,7 +86,7 @@
             this.partBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.taskBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.taskRowBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.startNewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnDeleteParts = new System.Windows.Forms.Button();
             this.jobEditBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -431,6 +432,7 @@
             // 
             // partsGroupBox
             // 
+            this.partsGroupBox.Controls.Add(this.btnDeleteParts);
             this.partsGroupBox.Controls.Add(this.labelSearchParts);
             this.partsGroupBox.Controls.Add(this.txtBoxSearchParts);
             this.partsGroupBox.Controls.Add(this.partsGridView);
@@ -564,17 +566,24 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // startNewToolStripMenuItem
+            // 
+            this.startNewToolStripMenuItem.Name = "startNewToolStripMenuItem";
+            this.startNewToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.startNewToolStripMenuItem.Text = "Start New";
+            this.startNewToolStripMenuItem.Click += new System.EventHandler(this.startNewToolStripMenuItem_Click);
+            // 
             // saveAllDataToolStripMenuItem
             // 
             this.saveAllDataToolStripMenuItem.Name = "saveAllDataToolStripMenuItem";
-            this.saveAllDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAllDataToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.saveAllDataToolStripMenuItem.Text = "Save Data...";
             this.saveAllDataToolStripMenuItem.Click += new System.EventHandler(this.saveDataToolStripMenuItem_Click);
             // 
             // loadDataToolStripMenuItem
             // 
             this.loadDataToolStripMenuItem.Name = "loadDataToolStripMenuItem";
-            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loadDataToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.loadDataToolStripMenuItem.Text = "Load Data...";
             this.loadDataToolStripMenuItem.Click += new System.EventHandler(this.loadDataToolStripMenuItem_Click);
             // 
@@ -590,14 +599,14 @@
             // categoriesToolStripMenuItem
             // 
             this.categoriesToolStripMenuItem.Name = "categoriesToolStripMenuItem";
-            this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.categoriesToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.categoriesToolStripMenuItem.Text = "Categories";
             this.categoriesToolStripMenuItem.Click += new System.EventHandler(this.categoriesToolStripMenuItem_Click);
             // 
             // ratesToolStripMenuItem
             // 
             this.ratesToolStripMenuItem.Name = "ratesToolStripMenuItem";
-            this.ratesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ratesToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.ratesToolStripMenuItem.Text = "Rates";
             this.ratesToolStripMenuItem.Click += new System.EventHandler(this.ratesToolStripMenuItem_Click);
             // 
@@ -610,12 +619,15 @@
             // 
             this.saveTaskCsvDialog.Filter = "CSV (*.csv) | *.csv";
             // 
-            // startNewToolStripMenuItem
+            // btnDeleteParts
             // 
-            this.startNewToolStripMenuItem.Name = "startNewToolStripMenuItem";
-            this.startNewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.startNewToolStripMenuItem.Text = "Start New";
-            this.startNewToolStripMenuItem.Click += new System.EventHandler(this.startNewToolStripMenuItem_Click);
+            this.btnDeleteParts.Location = new System.Drawing.Point(172, 46);
+            this.btnDeleteParts.Name = "btnDeleteParts";
+            this.btnDeleteParts.Size = new System.Drawing.Size(130, 23);
+            this.btnDeleteParts.TabIndex = 5;
+            this.btnDeleteParts.Text = "Delete Selected Part(s)";
+            this.btnDeleteParts.UseVisualStyleBackColor = true;
+            this.btnDeleteParts.Click += new System.EventHandler(this.btnDeleteParts_Click);
             // 
             // PrimaryForm
             // 
@@ -710,6 +722,7 @@
         private System.Windows.Forms.SaveFileDialog saveTaskCsvDialog;
         private System.Windows.Forms.Button btnEditSelectedTasks;
         private System.Windows.Forms.ToolStripMenuItem startNewToolStripMenuItem;
+        private System.Windows.Forms.Button btnDeleteParts;
     }
 }
 

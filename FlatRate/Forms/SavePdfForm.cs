@@ -43,6 +43,10 @@ namespace FlatRate
             if (!errorState)
             {
                 PdfAuthorInfo info = new PdfAuthorInfo(pdfTitleText.Text, authorText.Text, imagePathText.Text);
+                if (radioButtonDefault.Checked)
+                {
+
+                }
 
                 if (exportPDFDialog.ShowDialog() == DialogResult.OK && exportPDFDialog.FileName != "")
                 {
