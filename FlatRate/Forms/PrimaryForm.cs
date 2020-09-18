@@ -171,6 +171,45 @@ namespace FlatRate
             updateTempCosts();
         }
 
+        private void btnDeleteParts_Click(object sender, EventArgs e)
+        {
+            //find selected parts in part list, if any, and delete
+            if (partsGridView.SelectedRows != null)
+            {
+                List<String> tasksAffected = new List<String>();
+                List<String> partIds = new List<String>();
+                for (int i = 0; i < partsGridView.SelectedRows.Count; i++)
+                {
+                    string partID = (string)partsGridView.SelectedRows[i].Cells[0].Value;
+                    partIds.Add(partID);
+                    foreach(String id in dataManager.GetTaskIDsUsingThisPart(partID))
+                    {
+                        tasksAffected.Add(id);
+                    }
+                }
+                if(tasksAffected.Count >= 1)
+                {
+                    using (var form = new PartDeleteWarning(tasksAffected))
+                    {
+                        DialogResult result = form.ShowDialog();
+                        if(result == DialogResult.OK)
+                        {
+                            foreach(String id in partIds)
+                            {
+                                dataManager.DeletePartById(id);
+                            }
+                            updateParts();
+                            updateTempCosts();
+                            updateTaskListDisplay();
+                        }
+                    }
+                }
+                //need to clear temporary/edit task data in case a part used there has been deleted
+                temporaryParts.Clear();
+                taskRowBindingSource.Clear();
+            }
+        }
+
         //--------------------------------------------------------------------INTERNAL USE FOR UPDATING--------------------------
         private void updateTempCosts()
         {
@@ -235,7 +274,10 @@ namespace FlatRate
                     comboSubcategory.DisplayMember = "Title";
                     comboSubcategory.ValueMember = "ID";
                 }
-
+            }
+            else
+            {
+                comboSubcategory.DataSource = null;
             }
         }
 
@@ -443,7 +485,7 @@ namespace FlatRate
                 bool overwrite = true; //default to true so task will be saved unless it's a duplicate
                 bool taskExists = dataManager.IsTask(newID);
                 DataRow row = DataManager.Tasks.Rows.Find(newID);
-                if (!taskExists)
+                if (taskExists)
                 {
                     overwrite = false; //it's a duplicate, so don't overwrite by default
                     string title = "Duplicate Task ID";
@@ -584,10 +626,9 @@ namespace FlatRate
                 string tempID = tasksGridView.Rows[index].Cells[0].Value.ToString();
 
                 dataManager.DeleteTask(tempID);
-
-                //update binding source
-                updateTaskListDisplay();
             }
+            //update binding source
+            updateTaskListDisplay();
         }
         private void btnEditSelectedTasks_Click(object sender, EventArgs e)
         {
@@ -624,6 +665,7 @@ namespace FlatRate
         {
             CategoriesForm categoriesForm = new CategoriesForm();
             categoriesForm.ShowDialog();
+            updateComboBoxes();
             updateTaskListDisplay();
         }
 

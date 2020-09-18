@@ -134,6 +134,7 @@
             this.radioButtonSelect.TabStop = true;
             this.radioButtonSelect.Text = "Select from File";
             this.radioButtonSelect.UseVisualStyleBackColor = true;
+            this.radioButtonSelect.CheckedChanged += new System.EventHandler(this.RadioCheckedChanged);
             // 
             // pictureBox1
             // 

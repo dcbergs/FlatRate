@@ -137,7 +137,7 @@ namespace FlatRate
 
             if(MetaInfo.ImageFilePath == "")
             {
-                byte[] logo = LoadImage("FlatRate.images.logo.jpg");
+                byte[] logo = LoadImage("FlatRate.Resources.logo.jpg");
 
                 logoFilename = MigraDocFilenameFromByteArray(logo);
             }
@@ -205,6 +205,8 @@ namespace FlatRate
                 //let table of contents link to category
                 categoryParagraph.AddBookmark(category.Id.ToString());
 
+                List<Subcategory> subcategories = dataManager.GetSubcategoriesByCategoryId(category.Id);
+
                 foreach(Subcategory subcategory in dataManager.GetSubcategoriesByCategoryId(category.Id))
                 {
                     Paragraph subcategoryParagraph = section.AddParagraph(subcategory.Title);
@@ -252,7 +254,6 @@ namespace FlatRate
 
                         row.Cells[3].AddParagraph(taskSummary.PremiumTotal.ToString("F"));
                         row.Cells[3].VerticalAlignment = VerticalAlignment.Center;
-
                     }
                     section.Add(table);
                 }

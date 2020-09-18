@@ -10,7 +10,7 @@ namespace FlatRate.Model
     {
         public String Title { get; }
         public String Author { get; }
-        public String ImageFilePath { get; }
+        public String ImageFilePath { get; set; }
 
         public PdfAuthorInfo(String title, String author, String filepath)
         {
